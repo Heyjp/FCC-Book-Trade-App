@@ -8,7 +8,7 @@ var Trade = require('../config/trader.js');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
+/*
   if (req.user) {
     var user = req.user.username;
     Trade.booksAvailable(user, function (err, info) {
@@ -25,6 +25,9 @@ router.get('/', function(req, res, next) {
         res.render('child', { title: 'Express', data: info });
     });
   }
+*/
+
+  res.render('index')
 });
 
 router.get('/login', function (req, res) {
