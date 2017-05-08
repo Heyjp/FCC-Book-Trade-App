@@ -166,6 +166,17 @@ router.post('/cancel-request', function(req, res) {
   })
 });
 
+router.get('/api/books', function (req, res) {
+  console.log("request been made");
+  Trade.booksAvailable(null, function (err, info) {
+    if (err) {
+      console.log(err, "there is an");
+    }
+    console.log(info, "this is info from api/books");
+    res.status(200).send(info);
+  });
+});
+
 module.exports = router;
 
 

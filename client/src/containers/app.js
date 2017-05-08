@@ -1,9 +1,34 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import axios from 'axios';
 
 import Main from '../containers/Main.js';
+import Nav from '../components/Nav.js';
+import DashBoard from '../containers/Dashboard.js'
+import LoginForm from '../components/Form.js'
+
+import setLibrary from '../actions'
 
 class Container extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+  }
+
+  componentWillMount() {
+    this.getBooks();
+  }
+
+  getBooks () {
+    let self = this;
+    axios.get('/api/books')
+      .then(function (res) {
+        console.log(res, "this is res");
+        dispatch(setLibrary(res.data));
+      })
+  }
+
 
   render () {
     return (
@@ -13,19 +38,16 @@ class Container extends React.Component {
             <h1>Header</h1>
           </div>
 
-          <div>
-            <ul>
-              <Link to="/">Main</Link>
-              <Link to="/about">About</Link>
-              <Link to="/topics">Topics</Link>
-            </ul>
-          </div>
+          <Nav />
           <hr />
 
 
           <Route exact path='/' component={Main} />
-          <Route exact path='/about' component={About} />
-          <Route exact path='/topics' component={Topics} />
+          <Route  path='/about' component={About} />
+          <Route  path='/topics' component={Topics} />
+          <Route  path='/dashboard' component={DashBoard} />
+          <Route  path='/login' component={LoginForm} />
+          <Route  path='/signup' component={LoginForm} />
 
           <hr />
           <div>
