@@ -42,7 +42,18 @@ class Main extends React.Component {
       })
   }
 
-  toggleModal () {
+/*
+
+this.state.isOpen ? this.setState({
+  isOpen: false
+}) :
+this.setState({
+  isOpen: true
+})
+
+*/
+  toggleModal (e) {
+
     this.state.isOpen ? this.setState({
       isOpen: false
     }) :
@@ -56,6 +67,15 @@ class Main extends React.Component {
     this.toggleModal();
   }
 
+  requestBook (object, e) {
+    e.stopPropagation();
+    console.log(object, "object");
+    axios.post('/api/request')
+      .then(function (res) {
+        console.log(res, "this is res on requestBook")
+      })
+  }
+
   render () {
     return (
       <div className="main-container">
@@ -64,7 +84,7 @@ class Main extends React.Component {
         </div>
         <BooksList books={this.state.books} toggleModal={this.handleClick} />
         {
-          this.state.isOpen ? <Modal modal={this.props.modal} closeModal={this.toggleModal}/> : ""
+          this.state.isOpen ? <Modal modal={this.props.modal} reqBook={this.requestBook} closeModal={this.toggleModal}/> : ""
         }
       </div>
     )

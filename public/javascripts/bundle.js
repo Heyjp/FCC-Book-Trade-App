@@ -32751,9 +32751,22 @@
 	        self.props.dispatch((0, _index.setLibrary)(res.data));
 	      });
 	    }
+
+	    /*
+	    
+	    this.state.isOpen ? this.setState({
+	      isOpen: false
+	    }) :
+	    this.setState({
+	      isOpen: true
+	    })
+	    
+	    */
+
 	  }, {
 	    key: 'toggleModal',
-	    value: function toggleModal() {
+	    value: function toggleModal(e) {
+
 	      this.state.isOpen ? this.setState({
 	        isOpen: false
 	      }) : this.setState({
@@ -32765,6 +32778,15 @@
 	    value: function handleClick(modal) {
 	      this.props.dispatch((0, _index.setModal)(modal));
 	      this.toggleModal();
+	    }
+	  }, {
+	    key: 'requestBook',
+	    value: function requestBook(object, e) {
+	      e.stopPropagation();
+	      console.log(object, "object");
+	      _axios2.default.post('/api/request').then(function (res) {
+	        console.log(res, "this is res on requestBook");
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -32782,7 +32804,7 @@
 	          )
 	        ),
 	        _react2.default.createElement(_Book2.default, { books: this.state.books, toggleModal: this.handleClick }),
-	        this.state.isOpen ? _react2.default.createElement(_Modal2.default, { modal: this.props.modal, closeModal: this.toggleModal }) : ""
+	        this.state.isOpen ? _react2.default.createElement(_Modal2.default, { modal: this.props.modal, reqBook: this.requestBook, closeModal: this.toggleModal }) : ""
 	      );
 	    }
 	  }]);
@@ -32860,7 +32882,7 @@
 	var Modal = function Modal(props) {
 	  return _react2.default.createElement(
 	    "div",
-	    { className: "modal", onClick: props.closeModal },
+	    { className: "modal", onClick: props.closeModal.bind(undefined) },
 	    _react2.default.createElement(
 	      "div",
 	      { className: "inner-box" },
@@ -32881,7 +32903,7 @@
 	            null,
 	            _react2.default.createElement(
 	              "a",
-	              null,
+	              { onClick: props.reqBook.bind(undefined, props.modal) },
 	              "Request Book"
 	            )
 	          )
