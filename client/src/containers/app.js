@@ -1,5 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 import axios from 'axios';
 
 import Main from '../containers/Main.js';
@@ -7,28 +8,11 @@ import Nav from '../components/Nav.js';
 import DashBoard from '../containers/Dashboard.js'
 import LoginForm from '../components/Form.js'
 
-import setLibrary from '../actions'
-
 class Container extends React.Component {
 
   constructor(props) {
     super(props);
-
   }
-
-  componentWillMount() {
-    this.getBooks();
-  }
-
-  getBooks () {
-    let self = this;
-    axios.get('/api/books')
-      .then(function (res) {
-        console.log(res, "this is res");
-        dispatch(setLibrary(res.data));
-      })
-  }
-
 
   render () {
     return (
@@ -72,4 +56,12 @@ const Topics = () => (
   </div>
 )
 
-export default Container;
+const mapStateToProps = (state) => {
+  return {
+    books: state.collection
+  }
+}
+
+let container = connect(mapStateToProps)(Container)
+
+export default container;

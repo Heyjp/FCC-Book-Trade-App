@@ -1,36 +1,59 @@
-import React from 'react'
+import React from 'react';
+import axios from 'axios';
+import {connect} from 'react-redux';
 
 import BooksList from '../components/Book.js'
 import Modal from '../components/Modal.js'
+
+import {setLibrary, setModal} from '../actions/index.js'
+
 
 class Main extends React.Component {
   constructor (props) {
     super(props);
 
     this.state = {
-      books: [1, 2, 3, 4, 5],
+      books: [],
       isOpen: false,
-
+      modal: false
     }
 
     this.handleClick = this.handleClick.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
+    this.getBooks = this.getBooks.bind(this);
   }
 
-  closeModal () {
+  componentWillMount () {
+    this.getBooks();
+  }
+
+  componentWillReceiveProps(nextProps) {
     this.setState({
-      isOpen: false
+      books: nextProps.books,
+      modal: nextProps.modal
     })
   }
 
-  handleClick (props) {
-      console.log(props, "this is props on handleClick")
-     this.state.isOpen ? this.setState({
-       isOpen: false
-     }) :
-     this.setState({
-       isOpen: true
-     })
+  getBooks () {
+    let self = this;
+    axios.get('/api/books')
+      .then(function (res) {
+        self.props.dispatch(setLibrary(res.data))
+      })
+  }
+
+  toggleModal () {
+    this.state.isOpen ? this.setState({
+      isOpen: false
+    }) :
+    this.setState({
+      isOpen: true
+    })
+  }
+
+  handleClick (modal) {
+    this.props.dispatch(setModal(modal))
+    this.toggleModal();
   }
 
   render () {
@@ -41,7 +64,7 @@ class Main extends React.Component {
         </div>
         <BooksList books={this.state.books} toggleModal={this.handleClick} />
         {
-          this.state.isOpen ? <Modal closeModal={this.closeModal}/> : ""
+          this.state.isOpen ? <Modal modal={this.props.modal} closeModal={this.toggleModal}/> : ""
         }
       </div>
     )
@@ -49,4 +72,13 @@ class Main extends React.Component {
 
 }
 
-export default Main;
+const mapStateToProps = (state) => {
+  return {
+    books: state.books,
+    modal: state.modal
+  }
+}
+
+let main = connect(mapStateToProps)(Main)
+
+export default main;

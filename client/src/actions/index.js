@@ -4,3 +4,10 @@ export const setLibrary = (collection) => {
     collection
   }
 }
+
+export const setModal = (modal) => {
+  return {
+    type: "SET_MODAL",
+    modal
+  }
+}

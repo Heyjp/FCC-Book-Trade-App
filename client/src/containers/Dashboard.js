@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux'
 
 import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js'
+
 
 class DashBoard extends React.Component {
   constructor(props) {
@@ -10,15 +12,12 @@ class DashBoard extends React.Component {
       active: false,
       tabs: ['current', 'request', 'add']
     }
+
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick (i) {
-    console.log("this is e", i);
     let result = this.state.tabs[i];
-    this.setState({
-      active: result
-    })
   }
 
   render() {
@@ -53,4 +52,13 @@ class DashBoard extends React.Component {
     }
 
 }
-export default DashBoard;
+
+const mapStateToProps = (state) => {
+  return {
+    books: state.collection
+  }
+}
+
+let dashBoard = connect(mapStateToProps)(DashBoard);
+
+export default dashBoard;
