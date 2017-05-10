@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
 
   res.render('index')
 });
-
+/*
 router.get('/login', function (req, res) {
   res.render('login');
 })
@@ -165,6 +165,8 @@ router.post('/cancel-request', function(req, res) {
       res.status(200).send("cancelled request")
   })
 });
+*/
+
 
 router.get('/api/books', function (req, res) {
   console.log("request been made");
@@ -187,6 +189,32 @@ router.post('/api/request', function (req, res) {
   })
 */
 });
+
+router.post('/api/login', function (req, res, next) {
+  console.log("login route post", req.body);
+
+  passport.authenticate('local-login', function(err, user, info) {
+    if (err) { console.log(err, "this is err in api/login") }
+    if (!user) { console.log("user does not exist") }
+
+    console.log("authenticating")
+    res.status(200).send("loggedIn")
+  })(req, res, next);
+
+});
+/*
+
+app.get('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      return res.redirect('/users/' + user.username);
+    });
+  })(req, res, next);
+});
+*/
 
 module.exports = router;
 

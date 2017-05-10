@@ -28,8 +28,6 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-
     this.setState({
       books: nextProps.books,
       modal: nextProps.modal
@@ -40,7 +38,6 @@ class Main extends React.Component {
     let self = this;
     axios.get('/api/books')
       .then(function (res) {
-        console.log(res, "this is res");
         self.props.dispatch(setLibrary(res.data))
       }).catch(function (err) {
         console.log(err, "this is err");
@@ -63,7 +60,6 @@ class Main extends React.Component {
 
   requestBook (object, e) {
     e.stopPropagation();
-    console.log(object, "object");
     axios.post('/api/request', object)
       .then(function (res) {
         console.log(res, "this is res on requestBook")

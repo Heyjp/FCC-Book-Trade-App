@@ -9,7 +9,7 @@ import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../compo
 class DashBoard extends React.Component {
   constructor(props) {
     super(props);
-
+    console.log(props)
     this.state = {
       active: false,
       tabs: ['current', 'request', 'add']

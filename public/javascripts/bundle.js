@@ -32819,8 +32819,6 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
-	      console.log(nextProps);
-
 	      this.setState({
 	        books: nextProps.books,
 	        modal: nextProps.modal
@@ -32831,7 +32829,6 @@
 	    value: function getBooks() {
 	      var self = this;
 	      _axios2.default.get('/api/books').then(function (res) {
-	        console.log(res, "this is res");
 	        self.props.dispatch((0, _index.setLibrary)(res.data));
 	      }).catch(function (err) {
 	        console.log(err, "this is err");
@@ -32856,7 +32853,6 @@
 	    key: 'requestBook',
 	    value: function requestBook(object, e) {
 	      e.stopPropagation();
-	      console.log(object, "object");
 	      _axios2.default.post('/api/request', object).then(function (res) {
 	        console.log(res, "this is res on requestBook");
 	      });
@@ -33149,6 +33145,7 @@
 
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (DashBoard.__proto__ || (0, _getPrototypeOf2.default)(DashBoard)).call(this, props));
 
+	    console.log(props);
 	    _this.state = {
 	      active: false,
 	      tabs: ['current', 'request', 'add']
@@ -33396,6 +33393,12 @@
 
 	var _Form2 = _interopRequireDefault(_Form);
 
+	var _login = __webpack_require__(391);
+
+	var _axios = __webpack_require__(351);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var AuthContainer = function (_React$Component) {
@@ -33409,12 +33412,24 @@
 	    _this.state = {
 	      username: "",
 	      password: "",
-	      route: "login"
+	      route: props.location.pathname
 	    };
+
+	    _this.route = props.location.pathname;
+
+	    _this.handleUser = _this.handleUser.bind(_this);
+	    _this.handlePass = _this.handlePass.bind(_this);
+	    _this.handleSubmit = _this.handleSubmit.bind(_this);
+	    _this.promiseCall = _this.promiseCall.bind(_this);
 	    return _this;
 	  }
 
 	  (0, _createClass3.default)(AuthContainer, [{
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(props) {
+	      console.log("new props", props);
+	    }
+	  }, {
 	    key: 'handleUser',
 	    value: function handleUser(e) {
 	      this.setState({
@@ -33431,16 +33446,31 @@
 	  }, {
 	    key: 'handleSubmit',
 	    value: function handleSubmit(e) {
+	      console.log("sending submit");
 	      e.preventDefault();
 	      var _state = this.state,
 	          username = _state.username,
 	          password = _state.password,
 	          route = _state.route;
 
-	      this.props.login(email, password, route);
+	      route = route.slice(1, route.length);
+	      this.promiseCall(username, password, route);
 	      this.setState({
-	        email: '',
+	        username: '',
 	        password: ''
+	      });
+	    }
+	  }, {
+	    key: 'promiseCall',
+	    value: function promiseCall(username, password, route) {
+	      var self = this;
+	      console.log("promise call being sent");
+	      _axios2.default.post('/api/' + route, { username: username, password: password }).then(function (res) {
+	        console.log(res, "data");
+	        self.props.dispatch((0, _login.setLoginSuccess)(true));
+	        self.props.dispatch((0, _login.setLoginError)(false));
+	      }).catch(function (err) {
+	        console.error(err, "err");
 	      });
 	    }
 	  }, {
@@ -33457,32 +33487,15 @@
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(state) {
+	  console.log(state, "this is state in auth");
 	  return {
-	    isLoginPending: state.isLoginPending,
-	    isLoginSuccess: state.isLoginSuccess,
-	    loginError: state.loginError
+	    isLoginPending: state.loginReducer.isLoginPending,
+	    isLoginSuccess: state.loginReducer.isLoginSuccess,
+	    loginError: state.loginReducer.loginError
 	  };
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-	  return {
-	    login: function (_login) {
-	      function login(_x, _x2, _x3) {
-	        return _login.apply(this, arguments);
-	      }
-
-	      login.toString = function () {
-	        return _login.toString();
-	      };
-
-	      return login;
-	    }(function (email, password, route) {
-	      return dispatch(login(email, password, route));
-	    })
-	  };
-	};
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AuthContainer);
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(AuthContainer);
 
 /***/ }),
 /* 388 */
@@ -33511,7 +33524,7 @@
 	        ),
 	        _react2.default.createElement(
 	            "form",
-	            { action: "/login", method: "post" },
+	            { onSubmit: props.submit },
 	            _react2.default.createElement(
 	                "div",
 	                null,
@@ -33535,7 +33548,7 @@
 	            _react2.default.createElement(
 	                "div",
 	                null,
-	                _react2.default.createElement("input", { type: "submit", value: "Log In", onSubmit: props.submit })
+	                _react2.default.createElement("input", { type: "submit", value: "Log In" })
 	            )
 	        )
 	    );
@@ -33636,6 +33649,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.setLoginPending = setLoginPending;
+	exports.setLoginSuccess = setLoginSuccess;
+	exports.setLoginError = setLoginError;
 
 	var _axios = __webpack_require__(351);
 
@@ -33662,28 +33678,39 @@
 	}
 
 	function setLoginError(loginError) {
+	  console.log("setloginerror called");
 	  return {
 	    type: SET_LOGIN_ERROR,
 	    loginError: loginError
 	  };
 	}
 
-	function loginAction(email, password, route) {
+	function callLoginApi(email, password, callback) {
+	  setTimeout(function () {
+	    if (email === 'admin@example.com' && password === 'admin') {
+	      return callback(null);
+	    } else {
+	      return callback(new Error('Invalid email and password'));
+	    }
+	  }, 1000);
+	}
+
+	function login(email, password) {
 	  return function (dispatch) {
 	    dispatch(setLoginPending(true));
 	    dispatch(setLoginSuccess(false));
 	    dispatch(setLoginError(null));
 
-	    _axios2.default.get('/api/' + route).then(function (res) {
-	      dispatch(setLoginSuccess(true));
-	      console.log(res);
-	    }).catch(function (err) {
-	      dispatch(setLoginError(err));
+	    callLoginApi(email, password, function (error) {
+	      dispatch(setLoginPending(false));
+	      if (!error) {
+	        dispatch(setLoginSuccess(true));
+	      } else {
+	        dispatch(setLoginError(error));
+	      }
 	    });
 	  };
 	}
-
-	exports.default = loginAction;
 
 /***/ })
 /******/ ]);

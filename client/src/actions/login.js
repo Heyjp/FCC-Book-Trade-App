@@ -5,40 +5,51 @@ const SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
 const SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
 
 
-function setLoginPending(isLoginPending) {
+export function setLoginPending(isLoginPending) {
   return {
     type: SET_LOGIN_PENDING,
     isLoginPending
   };
 }
 
-function setLoginSuccess(isLoginSuccess) {
+export function setLoginSuccess(isLoginSuccess) {
   return {
     type: SET_LOGIN_SUCCESS,
     isLoginSuccess
   };
 }
 
-function setLoginError(loginError) {
+export function setLoginError(loginError) {
+  console.log("setloginerror called")
   return {
     type: SET_LOGIN_ERROR,
-    loginError
+    loginError: loginError
   }
 }
 
-function loginAction (email, password, route) {
+function callLoginApi(email, password, callback) {
+  setTimeout(() => {
+    if (email === 'admin@example.com' && password === 'admin') {
+      return callback(null);
+    } else {
+      return callback(new Error('Invalid email and password'));
+    }
+  }, 1000);
+}
+
+function login(email, password) {
   return dispatch => {
     dispatch(setLoginPending(true));
     dispatch(setLoginSuccess(false));
     dispatch(setLoginError(null));
 
-    axios.get(`/api/${route}`).then(function (res) {
-      dispatch(setLoginSuccess(true));
-      console.log(res);
-    }).catch(function (err) {
-      dispatch(setLoginError(err));
-    })
+    callLoginApi(email, password, error => {
+      dispatch(setLoginPending(false));
+      if (!error) {
+        dispatch(setLoginSuccess(true));
+      } else {
+        dispatch(setLoginError(error));
+      }
+    });
   }
 }
-
-export default loginAction;

@@ -2,6 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import Form from '../components/Form.js';
+import {setLoginError, setLoginSuccess} from '../actions/login.js';
+import axios from 'axios';
 
 class AuthContainer extends React.Component {
 
@@ -11,8 +13,19 @@ class AuthContainer extends React.Component {
     this.state = {
       username: "",
       password: "",
-      route: "login"
+      route: props.location.pathname
     }
+
+    this.route = props.location.pathname
+
+    this.handleUser = this.handleUser.bind(this);
+    this.handlePass = this.handlePass.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.promiseCall = this.promiseCall.bind(this)
+  }
+
+  componentWillReceiveProps (props) {
+    console.log("new props", props)
   }
 
   handleUser (e) {
@@ -28,12 +41,26 @@ class AuthContainer extends React.Component {
   }
 
   handleSubmit (e) {
+    console.log("sending submit")
     e.preventDefault();
     let {username, password, route} = this.state;
-    this.props.login(email, password, route);
+    route = route.slice(1, route.length)
+    this.promiseCall(username, password, route)
     this.setState({
-      email: '',
+      username: '',
       password: ''
+    })
+  }
+
+  promiseCall (username, password, route) {
+    let self = this;
+    console.log("promise call being sent")
+    axios.post(`/api/${route}`, {username, password}).then(function (res) {
+      console.log(res, "data");
+      self.props.dispatch(setLoginSuccess(true))
+      self.props.dispatch(setLoginError(false))
+    }).catch(function (err) {
+      console.error(err, "err")
     })
   }
 
@@ -48,17 +75,12 @@ class AuthContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state, "this is state in auth")
   return {
-    isLoginPending: state.isLoginPending,
-    isLoginSuccess: state.isLoginSuccess,
-    loginError: state.loginError
+    isLoginPending: state.loginReducer.isLoginPending,
+    isLoginSuccess: state.loginReducer.isLoginSuccess,
+    loginError: state.loginReducer.loginError
   };
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    login: (email, password, route) => dispatch(login(email, password, route))
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(AuthContainer);
+export default connect(mapStateToProps)(AuthContainer);
