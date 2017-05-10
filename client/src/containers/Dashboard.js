@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux'
 
+import loginAuth from '../actions/login.js'
+
 import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js'
 
 

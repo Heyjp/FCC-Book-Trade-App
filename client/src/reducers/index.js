@@ -1,18 +1,10 @@
-const bookApp = (state = {}, action) => {
-  switch (action.type) {
-    case "SET_LIBRARY":
-      return {
-        ...state,
-        books: action.collection
-      };
-    case "SET_MODAL":
-      return {
-        ...state,
-        modal: action.modal
-      }
-    default:
-      return state
-  }
-}
+import { combineReducers } from 'redux'
+import loginReducer from './login'
+import bookApp from './main'
 
-export default bookApp
+const bookClub = combineReducers({
+  loginReducer,
+  bookApp
+})
+
+export default bookClub;

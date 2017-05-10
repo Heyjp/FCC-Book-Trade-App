@@ -6,14 +6,6 @@ export const Profile = () => (
   </div>
 )
 
-/*
-<ul>
-  <li onClick={props.handleClick.bind(this, "request")}>Book Requests</li>
-  <li onClick={props.handleClick.bind(this, "add")}>Add Books to Library</li>
-  <li onClick={props.handleClick.bind(this, "current")}>Current Library</li>
-</ul>
-*/
-
 export const OptionBar = (props) => (
   <div>
     <ul>

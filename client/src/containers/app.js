@@ -6,7 +6,7 @@ import axios from 'axios';
 import Main from '../containers/Main.js';
 import Nav from '../components/Nav.js';
 import DashBoard from '../containers/Dashboard.js'
-import LoginForm from '../components/Form.js'
+import AuthContainer from '../containers/Auth.js'
 
 class Container extends React.Component {
 
@@ -30,8 +30,8 @@ class Container extends React.Component {
           <Route  path='/about' component={About} />
           <Route  path='/topics' component={Topics} />
           <Route  path='/dashboard' component={DashBoard} />
-          <Route  path='/login' component={LoginForm} />
-          <Route  path='/signup' component={LoginForm} />
+          <Route  path='/login' component={AuthContainer} />
+          <Route  path='/signup' component={AuthContainer} />
 
           <hr />
           <div>

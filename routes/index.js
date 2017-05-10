@@ -172,9 +172,20 @@ router.get('/api/books', function (req, res) {
     if (err) {
       console.log(err, "there is an");
     }
-    console.log(info, "this is info from api/books");
     res.status(200).send(info);
   });
+});
+
+router.post('/api/request', function (req, res) {
+  console.log(req.body, "this is req.body");
+/*
+  Trade.requestTrade(user, data, function (err, success) {
+    if (err) {
+      console.log(err);
+    }
+    res.send("successfully requested");
+  })
+*/
 });
 
 module.exports = router;

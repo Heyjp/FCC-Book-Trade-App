@@ -28,6 +28,8 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+
     this.setState({
       books: nextProps.books,
       modal: nextProps.modal
@@ -38,22 +40,14 @@ class Main extends React.Component {
     let self = this;
     axios.get('/api/books')
       .then(function (res) {
+        console.log(res, "this is res");
         self.props.dispatch(setLibrary(res.data))
+      }).catch(function (err) {
+        console.log(err, "this is err");
       })
   }
 
-/*
-
-this.state.isOpen ? this.setState({
-  isOpen: false
-}) :
-this.setState({
-  isOpen: true
-})
-
-*/
   toggleModal (e) {
-
     this.state.isOpen ? this.setState({
       isOpen: false
     }) :
@@ -70,7 +64,7 @@ this.setState({
   requestBook (object, e) {
     e.stopPropagation();
     console.log(object, "object");
-    axios.post('/api/request')
+    axios.post('/api/request', object)
       .then(function (res) {
         console.log(res, "this is res on requestBook")
       })
@@ -93,9 +87,10 @@ this.setState({
 }
 
 const mapStateToProps = (state) => {
+  console.log("state", state);
   return {
-    books: state.books,
-    modal: state.modal
+    books: state.bookApp.books,
+    modal: state.bookApp.modal
   }
 }
 
