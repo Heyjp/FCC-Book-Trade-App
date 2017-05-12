@@ -244,7 +244,6 @@ router.post('/api/book-search', function (req, res) {
   } else {
     googleUrl += title + "+inauthor:" + author;
   }
-  console.log(googleUrl, "url");
 
   // Google API request
   request(googleUrl, function (error, response, body) {
@@ -255,8 +254,7 @@ router.post('/api/book-search', function (req, res) {
        var json = JSON.parse(body);
        var list = createBookList(json);
 
-       console.log(list, "this is list");
-      // res.status(200).send(list);
+       res.status(200).send(list);
     }
   })
 });
@@ -279,11 +277,10 @@ module.exports = router;
 
 
 function createBookList (list) {
-  var newArray = [];
+  let newArray = [];
   list.items.forEach(function(ele) {
-    var obj = {};
-
-    if (obj.image) {
+    let obj = {};
+    if (ele.volumeInfo.imageLinks.thumbnail) {
       obj.image = ele.volumeInfo.imageLinks.thumbnail;
     } else {
       obj.image = "http://www.themagickalcat.com/v/vspfiles/photos/BBBUB5-2T.jpg";

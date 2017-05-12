@@ -4,7 +4,8 @@ import axios from 'axios'
 
 import loginAuth from '../actions/login.js'
 
-import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js'
+import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
+import BookList from '../components/Book.js';
 
 
 class DashBoard extends React.Component {
@@ -15,7 +16,8 @@ class DashBoard extends React.Component {
       active: false,
       tabs: ['current', 'request', 'add'],
       title: '',
-      author: ''
+      author: '',
+      searchResults: []
     }
 
     this.handleClick = this.handleClick.bind(this);
@@ -45,10 +47,14 @@ class DashBoard extends React.Component {
 
   handleSubmit () {
     console.log("handling submit")
+    let self = this;
     const {title, author} = this.state;
     axios.post('/api/book-search', {title, author})
     .then(function (res) {
       console.log(res);
+      self.setState({
+        searchResults: res.data
+      })
     })
 
     this.setState({
@@ -61,6 +67,7 @@ class DashBoard extends React.Component {
 
     let activeComponent;
 
+
     if (!this.state.active) {
       activeComponent = <CurrentBooks />
     } else if (this.state.active === "current") {
@@ -68,12 +75,20 @@ class DashBoard extends React.Component {
     } else if (this.state.active === "request") {
       activeComponent = <RequestTab />
     } else if (this.state.active === "add") {
-      activeComponent = <AddBooks
-                         title={this.state.title}
-                         author={this.state.author}
-                         updateTitle={this.updateTitle}
-                         updateAuthor={this.updateAuthor}
-                         submitBook={this.handleSubmit} />
+      activeComponent =  (
+        <div>
+          <AddBooks
+                                 title={this.state.title}
+                                 author={this.state.author}
+                                 updateTitle={this.updateTitle}
+                                 updateAuthor={this.updateAuthor}
+                                 submitBook={this.handleSubmit}
+                                 />
+          <BookList books={this.state.searchResults} />
+        </div>
+      )
+
+
     } else {
       activeComponent = <CurrentBooks />
     }

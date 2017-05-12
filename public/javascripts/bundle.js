@@ -33223,6 +33223,10 @@
 
 	var _Profile = __webpack_require__(389);
 
+	var _Book = __webpack_require__(383);
+
+	var _Book2 = _interopRequireDefault(_Book);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var DashBoard = function (_React$Component) {
@@ -33238,7 +33242,8 @@
 	      active: false,
 	      tabs: ['current', 'request', 'add'],
 	      title: '',
-	      author: ''
+	      author: '',
+	      searchResults: []
 	    };
 
 	    _this.handleClick = _this.handleClick.bind(_this);
@@ -33274,12 +33279,16 @@
 	    key: 'handleSubmit',
 	    value: function handleSubmit() {
 	      console.log("handling submit");
+	      var self = this;
 	      var _state = this.state,
 	          title = _state.title,
 	          author = _state.author;
 
 	      _axios2.default.post('/api/book-search', { title: title, author: author }).then(function (res) {
 	        console.log(res);
+	        self.setState({
+	          searchResults: res.data
+	        });
 	      });
 
 	      this.setState({
@@ -33300,12 +33309,18 @@
 	      } else if (this.state.active === "request") {
 	        activeComponent = _react2.default.createElement(_Profile.RequestTab, null);
 	      } else if (this.state.active === "add") {
-	        activeComponent = _react2.default.createElement(_Profile.AddBooks, {
-	          title: this.state.title,
-	          author: this.state.author,
-	          updateTitle: this.updateTitle,
-	          updateAuthor: this.updateAuthor,
-	          submitBook: this.handleSubmit });
+	        activeComponent = _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement(_Profile.AddBooks, {
+	            title: this.state.title,
+	            author: this.state.author,
+	            updateTitle: this.updateTitle,
+	            updateAuthor: this.updateAuthor,
+	            submitBook: this.handleSubmit
+	          }),
+	          _react2.default.createElement(_Book2.default, { books: this.state.searchResults })
+	        );
 	      } else {
 	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, null);
 	      }
