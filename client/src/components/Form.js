@@ -6,11 +6,11 @@ const Form = (props) => (
       <form onSubmit={props.submit}>
           <div>
               <label>Username:</label>
-              <input type="text" name="username" onChange={props.user}/>
+              <input type="text" name="username" value={props.username} onChange={props.user}/>
           </div>
           <div>
               <label>Password:</label>
-              <input type="password" name="password" onChange={props.pass}/>
+              <input type="password" name="password" value={props.password} onChange={props.pass}/>
           </div>
           <div>
               <input type="submit" value="Log In"/>

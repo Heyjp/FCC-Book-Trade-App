@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {Redirect} from 'react-router-dom'
 
 import Form from '../components/Form.js';
 import {setLoginError, setLoginSuccess} from '../actions/login.js';
@@ -41,7 +42,6 @@ class AuthContainer extends React.Component {
   }
 
   handleSubmit (e) {
-    console.log("sending submit")
     e.preventDefault();
     let {username, password, route} = this.state;
     route = route.slice(1, route.length)
@@ -66,16 +66,28 @@ class AuthContainer extends React.Component {
 
 
   render () {
+
+    if (this.props.isLoginSuccess) {
+      return (
+        <Redirect to='/' />
+      )
+    }
+
     return (
       <div>
-        <Form pass={this.handlePass} user={this.handleUser} submit={this.handleSubmit} />
+        <Form
+        pass={this.handlePass}
+        user={this.handleUser}
+        submit={this.handleSubmit}
+        username={this.state.username}
+        password={this.state.password}
+         />
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => {
-  console.log(state, "this is state in auth")
   return {
     isLoginPending: state.loginReducer.isLoginPending,
     isLoginSuccess: state.loginReducer.isLoginSuccess,

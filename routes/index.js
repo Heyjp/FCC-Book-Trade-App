@@ -80,9 +80,7 @@ router.post('/addbook', function (req, res) {
 
 });
 
-router.get('/register', function (req, res) {
-  res.render('register');
-})
+
 
 router.post('/login', passport.authenticate('local-login', { successRedirect: '/library',
                                                     failureRedirect: '/login' }));
@@ -194,14 +192,39 @@ router.post('/api/login', function (req, res, next) {
   console.log("login route post", req.body);
 
   passport.authenticate('local-login', function(err, user, info) {
-    if (err) { console.log(err, "this is err in api/login") }
-    if (!user) { console.log("user does not exist") }
+    if (err) {
+      console.log(err, "this is err in api/sig")
+      res.status(200).send(false)
+     }
+    if (!user) {
+      console.log("user does not exist")
+      res.status(200).send(false)
+    }
 
-    console.log("authenticating")
-    res.status(200).send("loggedIn")
+
+    console.log("authenticating", user)
+    res.status(200).send(user.username)
   })(req, res, next);
 
 });
+
+router.post('/api/signup', function (req, res, next) {
+  console.log("signup route post", req.body);
+
+  passport.authenticate('local-signup', function(err, user, info) {
+    if (err) {
+      console.log(err, "this is err in api/sig")
+      res.status(200).send(false)
+     }
+    if (!user) {
+      console.log("user does not exist")
+      res.status(200).send(false)
+    }
+
+    console.log("authenticating", user)
+    res.status(200).send(user.username)
+  })(req, res, next);
+})
 /*
 
 app.get('/login', function(req, res, next) {

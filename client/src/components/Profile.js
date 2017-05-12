@@ -10,7 +10,7 @@ export const OptionBar = (props) => (
   <div>
     <ul>
       {props.tabs.map(function (e, i) {
-        return <li onClick={props.handleClick.bind(this, i)}>{e}</li>
+        return <li onClick={props.handleClick.bind(this, i)} key={i}>{e}</li>
       })}
     </ul>
   </div>
