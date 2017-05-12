@@ -1,4 +1,7 @@
+require('dotenv').config();
+
 var express = require('express');
+var app = express();
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -7,40 +10,38 @@ var bodyParser = require('body-parser');
 var dust = require('dustjs-linkedin');
 var kleiDust = require('klei-dust');
 var mongoose = require('mongoose');
+var session = require('cookie-session');
 var passport = require('passport');
-var session = require('express-session');
 
 var routes = require('./routes/index');
 
 require('./config/passport')(passport);
 
-var app = express();
-
 var configDb = require("./config/db.js");
 mongoose.connect(configDb.url);
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(session({
+  name: 'session',
+  secret: "keyboard cat",
+  maxAge: 24 * 60 * 60 * 1000
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // view engine setup
 app.set('views', __dirname + '/views');
 app.engine('dust', kleiDust.dust);
 app.set('view engine', 'dust');
 app.set('view options', {layout: false});
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(session({
-  secret: 'secret',
-  saveUninitialized: true,
-  resave: true
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/', routes);
 
