@@ -5,6 +5,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var request = require('request');
 
 var Trade = require('../config/trader.js');
+var jwt = require ('jsonwebtoken')
+
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -194,16 +197,17 @@ router.post('/api/login', function (req, res, next) {
   passport.authenticate('local-login', function(err, user, info) {
     if (err) {
       console.log(err, "this is err in api/sig")
-      res.status(200).send(false)
+      return res.status(200).send(false)
      }
     if (!user) {
       console.log("user does not exist")
-      res.status(200).send(false)
+      return   res.status(200).send(false)
     }
-
-
-    console.log("authenticating", user)
-    res.status(200).send(user.username)
+    req.session.user = user.username;
+    let sig = jwt.sign({id: user.username}, "keyboard cat");
+    res.status(200)
+    .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
+    .send(user.username)
   })(req, res, next);
 
 });
@@ -214,15 +218,17 @@ router.post('/api/signup', function (req, res, next) {
   passport.authenticate('local-signup', function(err, user, info) {
     if (err) {
       console.log(err, "this is err in api/sig")
-      res.status(200).send(false)
+      return res.status(200).send(false)
      }
     if (!user) {
       console.log("user does not exist")
-      res.status(200).send(false)
+      return res.status(200).send(false)
     }
-
-    console.log("authenticating", user)
-    res.status(200).send(user.username)
+    req.session.user = user.username;
+    let sig = jwt.sign({id: user.username}, "keyboard cat");
+    res.status(200)
+    .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
+    .send(user.username)
   })(req, res, next);
 })
 /*
