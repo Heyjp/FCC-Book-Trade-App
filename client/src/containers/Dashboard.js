@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 import loginAuth from '../actions/login.js'
 
@@ -12,14 +13,48 @@ class DashBoard extends React.Component {
     console.log(props)
     this.state = {
       active: false,
-      tabs: ['current', 'request', 'add']
+      tabs: ['current', 'request', 'add'],
+      title: '',
+      author: ''
     }
 
     this.handleClick = this.handleClick.bind(this);
+    this.updateTitle = this.updateTitle.bind(this);
+    this.updateAuthor = this.updateAuthor.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleClick (i) {
     let result = this.state.tabs[i];
+    this.setState({
+      active: result
+    })
+  }
+
+  updateTitle (e) {
+    this.setState({
+      title: e.target.value
+    })
+  }
+
+  updateAuthor (e) {
+    this.setState({
+      author: e.target.value
+    })
+  }
+
+  handleSubmit () {
+    console.log("handling submit")
+    const {title, author} = this.state;
+    axios.post('/api/book-search', {title, author})
+    .then(function (res) {
+      console.log(res);
+    })
+
+    this.setState({
+      title: '',
+      author: ''
+    })
   }
 
   render() {
@@ -33,7 +68,12 @@ class DashBoard extends React.Component {
     } else if (this.state.active === "request") {
       activeComponent = <RequestTab />
     } else if (this.state.active === "add") {
-      activeComponent = <AddBooks />
+      activeComponent = <AddBooks
+                         title={this.state.title}
+                         author={this.state.author}
+                         updateTitle={this.updateTitle}
+                         updateAuthor={this.updateAuthor}
+                         submitBook={this.handleSubmit} />
     } else {
       activeComponent = <CurrentBooks />
     }

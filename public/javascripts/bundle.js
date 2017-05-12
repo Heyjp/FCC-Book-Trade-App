@@ -33213,6 +33213,10 @@
 
 	var _reactRedux = __webpack_require__(182);
 
+	var _axios = __webpack_require__(353);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
 	var _login = __webpack_require__(388);
 
 	var _login2 = _interopRequireDefault(_login);
@@ -33232,10 +33236,15 @@
 	    console.log(props);
 	    _this.state = {
 	      active: false,
-	      tabs: ['current', 'request', 'add']
+	      tabs: ['current', 'request', 'add'],
+	      title: '',
+	      author: ''
 	    };
 
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.updateTitle = _this.updateTitle.bind(_this);
+	    _this.updateAuthor = _this.updateAuthor.bind(_this);
+	    _this.handleSubmit = _this.handleSubmit.bind(_this);
 	    return _this;
 	  }
 
@@ -33243,6 +33252,40 @@
 	    key: 'handleClick',
 	    value: function handleClick(i) {
 	      var result = this.state.tabs[i];
+	      this.setState({
+	        active: result
+	      });
+	    }
+	  }, {
+	    key: 'updateTitle',
+	    value: function updateTitle(e) {
+	      this.setState({
+	        title: e.target.value
+	      });
+	    }
+	  }, {
+	    key: 'updateAuthor',
+	    value: function updateAuthor(e) {
+	      this.setState({
+	        author: e.target.value
+	      });
+	    }
+	  }, {
+	    key: 'handleSubmit',
+	    value: function handleSubmit() {
+	      console.log("handling submit");
+	      var _state = this.state,
+	          title = _state.title,
+	          author = _state.author;
+
+	      _axios2.default.post('/api/book-search', { title: title, author: author }).then(function (res) {
+	        console.log(res);
+	      });
+
+	      this.setState({
+	        title: '',
+	        author: ''
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -33257,7 +33300,12 @@
 	      } else if (this.state.active === "request") {
 	        activeComponent = _react2.default.createElement(_Profile.RequestTab, null);
 	      } else if (this.state.active === "add") {
-	        activeComponent = _react2.default.createElement(_Profile.AddBooks, null);
+	        activeComponent = _react2.default.createElement(_Profile.AddBooks, {
+	          title: this.state.title,
+	          author: this.state.author,
+	          updateTitle: this.updateTitle,
+	          updateAuthor: this.updateAuthor,
+	          submitBook: this.handleSubmit });
 	      } else {
 	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, null);
 	      }
@@ -33372,7 +33420,7 @@
 /* 389 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -33383,30 +33431,34 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _axios = __webpack_require__(353);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Profile = exports.Profile = function Profile() {
 	  return _react2.default.createElement(
-	    "div",
+	    'div',
 	    null,
 	    _react2.default.createElement(
-	      "h1",
+	      'h1',
 	      null,
-	      "Profile"
+	      'Profile'
 	    )
 	  );
 	};
 
 	var OptionBar = exports.OptionBar = function OptionBar(props) {
 	  return _react2.default.createElement(
-	    "div",
+	    'div',
 	    null,
 	    _react2.default.createElement(
-	      "ul",
+	      'ul',
 	      null,
 	      props.tabs.map(function (e, i) {
 	        return _react2.default.createElement(
-	          "li",
+	          'li',
 	          { onClick: props.handleClick.bind(this, i), key: i },
 	          e
 	        );
@@ -33417,35 +33469,35 @@
 
 	var RequestTab = exports.RequestTab = function RequestTab() {
 	  return _react2.default.createElement(
-	    "div",
+	    'div',
 	    null,
 	    _react2.default.createElement(
-	      "h4",
+	      'h4',
 	      null,
-	      "Requests"
+	      'Requests'
 	    ),
 	    _react2.default.createElement(
-	      "ul",
+	      'ul',
 	      null,
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      ),
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      ),
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      ),
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      )
 	    )
 	  );
@@ -33453,57 +33505,58 @@
 
 	var CurrentBooks = exports.CurrentBooks = function CurrentBooks() {
 	  return _react2.default.createElement(
-	    "div",
+	    'div',
 	    null,
 	    _react2.default.createElement(
-	      "h4",
+	      'h4',
 	      null,
-	      "Current Books"
+	      'Current Books'
 	    ),
 	    _react2.default.createElement(
-	      "ul",
+	      'ul',
 	      null,
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      ),
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      ),
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      ),
 	      _react2.default.createElement(
-	        "li",
+	        'li',
 	        null,
-	        "Book"
+	        'Book'
 	      )
 	    )
 	  );
 	};
 
-	var AddBooks = exports.AddBooks = function AddBooks() {
+	var AddBooks = exports.AddBooks = function AddBooks(props) {
 	  return _react2.default.createElement(
-	    "div",
+	    'div',
 	    null,
 	    _react2.default.createElement(
-	      "h4",
+	      'h4',
 	      null,
-	      "Add Book"
+	      'Add Book'
 	    ),
 	    _react2.default.createElement(
-	      "div",
+	      'div',
 	      null,
-	      _react2.default.createElement("input", { type: "text", placeholder: "search" }),
+	      _react2.default.createElement('input', { type: 'text', placeholder: 'Book Title', value: props.title, onChange: props.updateTitle }),
+	      _react2.default.createElement('input', { type: 'text', placeholder: 'Author', value: props.author, onChange: props.updateAuthor }),
 	      _react2.default.createElement(
-	        "button",
-	        null,
-	        "Submit"
+	        'button',
+	        { onClick: props.submitBook },
+	        'Submit'
 	      )
 	    )
 	  );

@@ -230,7 +230,37 @@ router.post('/api/signup', function (req, res, next) {
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
     .send(user.username)
   })(req, res, next);
-})
+});
+
+router.post('/api/book-search', function (req, res) {
+
+  const title = req.body.title;
+  const author = req.body.author;
+  let googleUrl = "https://www.googleapis.com/books/v1/volumes?q="
+
+  // Filters results depending on whether a title or author is submitted
+  if (!author) {
+    googleUrl += title;
+  } else {
+    googleUrl += title + "+inauthor:" + author;
+  }
+  console.log(googleUrl, "url");
+
+  // Google API request
+  request(googleUrl, function (error, response, body) {
+    if (error) {
+      console.log(err);
+    } else if (!error && response.statusCode == 200) {
+
+       var json = JSON.parse(body);
+       var list = createBookList(json);
+
+       console.log(list, "this is list");
+      // res.status(200).send(list);
+    }
+  })
+});
+
 /*
 
 app.get('/login', function(req, res, next) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 export const Profile = () => (
   <div>
@@ -40,12 +41,13 @@ export const CurrentBooks = () => (
   </div>
 )
 
-export const AddBooks = () => (
+export const AddBooks = (props) => (
   <div>
     <h4>Add Book</h4>
     <div>
-      <input type="text" placeholder="search" />
-      <button>Submit</button>
+      <input type="text" placeholder="Book Title" value={props.title} onChange={props.updateTitle}/>
+      <input type="text" placeholder="Author" value={props.author} onChange={props.updateAuthor}/>
+      <button onClick={props.submitBook}>Submit</button>
       </div>
   </div>
 )
