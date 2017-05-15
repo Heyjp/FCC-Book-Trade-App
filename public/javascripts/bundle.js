@@ -24216,10 +24216,12 @@
 	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
 	    isLoginSuccess: false,
 	    isLoginPending: false,
-	    loginError: null
+	    loginError: null,
+	    user: false
 	  };
 	  var action = arguments[1];
 
+	  console.log(action, "this is action");
 	  switch (action.type) {
 	    case "SET_LOGIN_PENDING":
 	      return (0, _assign2.default)({}, state, {
@@ -24236,6 +24238,10 @@
 	        loginError: action.loginError
 	      });
 
+	    case "SET_USER":
+	      return (0, _assign2.default)({}, state, {
+	        user: action.user
+	      });
 	    default:
 	      return state;
 	  }
@@ -24777,6 +24783,10 @@
 	    case "SET_MODAL":
 	      return (0, _extends3.default)({}, state, {
 	        modal: action.modal
+	      });
+	    case "SET_USER_LIBRARY":
+	      return (0, _extends3.default)({}, state, {
+	        userLibrary: action.userLibrary
 	      });
 	    default:
 	      return state;
@@ -32965,7 +32975,6 @@
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(state) {
-	  console.log("state", state);
 	  return {
 	    books: state.bookApp.books,
 	    modal: state.bookApp.modal
@@ -33073,7 +33082,7 @@
 /* 385 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -33082,6 +33091,13 @@
 	  return {
 	    type: 'SET_LIBRARY',
 	    collection: collection
+	  };
+	};
+
+	var setUserLibrary = exports.setUserLibrary = function setUserLibrary(userLibrary) {
+	  return {
+	    type: 'SET_LIBRARY',
+	    userLibrary: userLibrary
 	  };
 	};
 
@@ -33221,6 +33237,8 @@
 
 	var _login2 = _interopRequireDefault(_login);
 
+	var _index = __webpack_require__(385);
+
 	var _Profile = __webpack_require__(389);
 
 	var _Book = __webpack_require__(383);
@@ -33237,23 +33255,30 @@
 
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (DashBoard.__proto__ || (0, _getPrototypeOf2.default)(DashBoard)).call(this, props));
 
-	    console.log(props);
 	    _this.state = {
 	      active: false,
 	      tabs: ['current', 'request', 'add'],
 	      title: '',
 	      author: '',
-	      searchResults: []
+	      searchResults: [],
+	      user: props.user
+
 	    };
 
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.updateTitle = _this.updateTitle.bind(_this);
 	    _this.updateAuthor = _this.updateAuthor.bind(_this);
 	    _this.handleSubmit = _this.handleSubmit.bind(_this);
+	    _this.setUserLibrary = _this.setUserLibrary.bind(_this);
 	    return _this;
 	  }
 
 	  (0, _createClass3.default)(DashBoard, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.setUserLibrary();
+	    }
+	  }, {
 	    key: 'handleClick',
 	    value: function handleClick(i) {
 	      var result = this.state.tabs[i];
@@ -33276,16 +33301,27 @@
 	      });
 	    }
 	  }, {
+	    key: 'setUserLibrary',
+	    value: function setUserLibrary() {
+	      var self = this;
+	      var user = this.state.user;
+	      console.log(user, "this is user");
+	      _axios2.default.get('/api/show-library?user=' + user).then(function (res) {
+	        console.log(res, "dashboard getBooks");
+	        // self.props.dispatch(setUserLibrary(res.data))
+	      }).catch(function (err) {
+	        console.log(err, "this is err");
+	      });
+	    }
+	  }, {
 	    key: 'handleSubmit',
 	    value: function handleSubmit() {
-	      console.log("handling submit");
 	      var self = this;
 	      var _state = this.state,
 	          title = _state.title,
 	          author = _state.author;
 
 	      _axios2.default.post('/api/book-search', { title: title, author: author }).then(function (res) {
-	        console.log(res);
 	        self.setState({
 	          searchResults: res.data
 	        });
@@ -33303,9 +33339,9 @@
 	      var activeComponent = void 0;
 
 	      if (!this.state.active) {
-	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, null);
+	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, { books: this.props.books });
 	      } else if (this.state.active === "current") {
-	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, null);
+	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, { books: this.props.books });
 	      } else if (this.state.active === "request") {
 	        activeComponent = _react2.default.createElement(_Profile.RequestTab, null);
 	      } else if (this.state.active === "add") {
@@ -33322,7 +33358,7 @@
 	          _react2.default.createElement(_Book2.default, { books: this.state.searchResults })
 	        );
 	      } else {
-	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, null);
+	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, { books: this.props.books });
 	      }
 
 	      return _react2.default.createElement(
@@ -33350,8 +33386,10 @@
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(state) {
+	  console.log(state, "this is state on dashboard");
 	  return {
-	    books: state.collection
+	    books: state.collection,
+	    user: state.loginReducer.user
 	  };
 	};
 
@@ -33368,6 +33406,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.setUser = setUser;
 	exports.setLoginPending = setLoginPending;
 	exports.setLoginSuccess = setLoginSuccess;
 	exports.setLoginError = setLoginError;
@@ -33381,6 +33420,14 @@
 	var SET_LOGIN_PENDING = 'SET_LOGIN_PENDING';
 	var SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
 	var SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
+	var SET_USER = 'SET_USER';
+
+	function setUser(user) {
+	  return {
+	    type: SET_USER,
+	    user: user
+	  };
+	}
 
 	function setLoginPending(isLoginPending) {
 	  return {
@@ -33397,37 +33444,9 @@
 	}
 
 	function setLoginError(loginError) {
-	  console.log("setloginerror called");
 	  return {
 	    type: SET_LOGIN_ERROR,
 	    loginError: loginError
-	  };
-	}
-
-	function callLoginApi(email, password, callback) {
-	  setTimeout(function () {
-	    if (email === 'admin@example.com' && password === 'admin') {
-	      return callback(null);
-	    } else {
-	      return callback(new Error('Invalid email and password'));
-	    }
-	  }, 1000);
-	}
-
-	function login(email, password) {
-	  return function (dispatch) {
-	    dispatch(setLoginPending(true));
-	    dispatch(setLoginSuccess(false));
-	    dispatch(setLoginError(null));
-
-	    callLoginApi(email, password, function (error) {
-	      dispatch(setLoginPending(false));
-	      if (!error) {
-	        dispatch(setLoginSuccess(true));
-	      } else {
-	        dispatch(setLoginError(error));
-	      }
-	    });
 	  };
 	}
 
@@ -33518,7 +33537,7 @@
 	  );
 	};
 
-	var CurrentBooks = exports.CurrentBooks = function CurrentBooks() {
+	var CurrentBooks = exports.CurrentBooks = function CurrentBooks(props) {
 	  return _react2.default.createElement(
 	    'div',
 	    null,
@@ -33530,26 +33549,13 @@
 	    _react2.default.createElement(
 	      'ul',
 	      null,
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      )
+	      props.books.map(function (e) {
+	        return _react2.default.createElement(
+	          'li',
+	          null,
+	          e
+	        );
+	      })
 	    )
 	  );
 	};
@@ -33638,7 +33644,8 @@
 	    _this.state = {
 	      username: "",
 	      password: "",
-	      route: props.location.pathname
+	      route: props.location.pathname,
+	      user: props.user
 	    };
 
 	    _this.route = props.location.pathname;
@@ -33677,6 +33684,7 @@
 	          username = _state.username,
 	          password = _state.password,
 	          route = _state.route;
+	      // Route is taken from  the route props and contains "/", slice to remove it.
 
 	      route = route.slice(1, route.length);
 	      this.promiseCall(username, password, route);
@@ -33689,11 +33697,12 @@
 	    key: 'promiseCall',
 	    value: function promiseCall(username, password, route) {
 	      var self = this;
-	      console.log("promise call being sent");
 	      _axios2.default.post('/api/' + route, { username: username, password: password }).then(function (res) {
-	        console.log(res, "data");
-	        self.props.dispatch((0, _login.setLoginSuccess)(true));
-	        self.props.dispatch((0, _login.setLoginError)(false));
+
+	        // self.props.dispatch(setLoginSuccess(true));
+	        // get the username from res.data,
+	        // self.props.dispatch(setLoginError(false));
+	        self.props.dispatch((0, _login.setUser)(res.data));
 	      }).catch(function (err) {
 	        console.error(err, "err");
 	      });
@@ -33702,7 +33711,8 @@
 	    key: 'render',
 	    value: function render() {
 
-	      if (this.props.isLoginSuccess) {
+	      // If user is logged in redirect from page
+	      if (this.props.user !== false) {
 	        return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/' });
 	      }
 
@@ -33726,7 +33736,8 @@
 	  return {
 	    isLoginPending: state.loginReducer.isLoginPending,
 	    isLoginSuccess: state.loginReducer.isLoginSuccess,
-	    loginError: state.loginReducer.loginError
+	    loginError: state.loginReducer.loginError,
+	    user: state.loginReducer.user
 	  };
 	};
 

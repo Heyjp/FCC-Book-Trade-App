@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(session({
   name: 'session',
-  secret: "keyboard cat",
+  secret: process.env.SESSION_KEY,
   maxAge: 24 * 60 * 60 * 1000
 }));
 

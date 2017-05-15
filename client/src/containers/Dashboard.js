@@ -4,6 +4,7 @@ import axios from 'axios'
 
 import loginAuth from '../actions/login.js'
 
+import {setUserLibrary} from "../actions/index.js"
 import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
 import BookList from '../components/Book.js';
 
@@ -11,19 +12,25 @@ import BookList from '../components/Book.js';
 class DashBoard extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props)
     this.state = {
       active: false,
       tabs: ['current', 'request', 'add'],
       title: '',
       author: '',
-      searchResults: []
+      searchResults: [],
+      user: props.user
+
     }
 
     this.handleClick = this.handleClick.bind(this);
     this.updateTitle = this.updateTitle.bind(this);
     this.updateAuthor = this.updateAuthor.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.setUserLibrary = this.setUserLibrary.bind(this);
+  }
+
+  componentWillMount () {
+    this.setUserLibrary();
   }
 
   handleClick (i) {
@@ -45,13 +52,24 @@ class DashBoard extends React.Component {
     })
   }
 
+  setUserLibrary () {
+    let self = this;
+    let user = this.state.user;
+    console.log(user, "this is user");
+    axios.get(`/api/show-library?user=${user}`)
+      .then(function (res) {
+        console.log(res, "dashboard getBooks")
+        // self.props.dispatch(setUserLibrary(res.data))
+      }).catch(function (err) {
+        console.log(err, "this is err");
+      })
+  }
+
   handleSubmit () {
-    console.log("handling submit")
     let self = this;
     const {title, author} = this.state;
     axios.post('/api/book-search', {title, author})
     .then(function (res) {
-      console.log(res);
       self.setState({
         searchResults: res.data
       })
@@ -69,9 +87,9 @@ class DashBoard extends React.Component {
 
 
     if (!this.state.active) {
-      activeComponent = <CurrentBooks />
+      activeComponent = <CurrentBooks books={this.props.books} />
     } else if (this.state.active === "current") {
-      activeComponent = <CurrentBooks />
+      activeComponent = <CurrentBooks books={this.props.books} />
     } else if (this.state.active === "request") {
       activeComponent = <RequestTab />
     } else if (this.state.active === "add") {
@@ -87,10 +105,8 @@ class DashBoard extends React.Component {
           <BookList books={this.state.searchResults} />
         </div>
       )
-
-
     } else {
-      activeComponent = <CurrentBooks />
+      activeComponent = <CurrentBooks books={this.props.books} />
     }
 
       return (
@@ -111,8 +127,10 @@ class DashBoard extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state, "this is state on dashboard");
   return {
-    books: state.collection
+    books: state.collection,
+    user: state.loginReducer.user
   }
 }
 

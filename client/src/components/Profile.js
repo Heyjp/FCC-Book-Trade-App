@@ -29,14 +29,13 @@ export const RequestTab = () => (
   </div>
 )
 
-export const CurrentBooks = () => (
+export const CurrentBooks = (props) => (
   <div>
     <h4>Current Books</h4>
     <ul>
-      <li>Book</li>
-      <li>Book</li>
-      <li>Book</li>
-      <li>Book</li>
+      {props.books.map(function (e) {
+        return <li>{e}</li>
+      })}
     </ul>
   </div>
 )

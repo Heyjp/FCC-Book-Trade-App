@@ -83,7 +83,6 @@ class Main extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log("state", state);
   return {
     books: state.bookApp.books,
     modal: state.bookApp.modal

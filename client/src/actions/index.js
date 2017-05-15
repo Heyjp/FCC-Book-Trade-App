@@ -5,6 +5,13 @@ export const setLibrary = (collection) => {
   }
 }
 
+export const setUserLibrary = (userLibrary) => {
+  return {
+    type: 'SET_LIBRARY',
+    userLibrary
+  }
+}
+
 export const setModal = (modal) => {
   return {
     type: "SET_MODAL",

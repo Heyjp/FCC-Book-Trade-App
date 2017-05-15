@@ -92,7 +92,6 @@ router.post('/register', passport.authenticate('local-signup', { successRedirect
                                                                 failureRedirect: '/login' }));
 
 
-
 router.post('/search', function (req, res) {
   var data = req.body;
   console.log(data);
@@ -168,16 +167,29 @@ router.post('/cancel-request', function(req, res) {
 });
 */
 
-
+// get a collection of all the books in the database
 router.get('/api/books', function (req, res) {
-  console.log("request been made");
-  Trade.booksAvailable(null, function (err, info) {
+    Trade.booksAvailable(null, function (err, info) {
+      if (err) {
+        console.log(err, "there is an");
+      }
+      console.log("no user")
+      res.status(200).send(info);
+    });
+});
+
+// Get the users personal library
+router.get('/api/show-library', function (req, res) {
+  let user = req.query.user
+  Trade.showLibrary(user, function (err, info) {
     if (err) {
       console.log(err, "there is an");
     }
+    console.log("user")
     res.status(200).send(info);
   });
 });
+
 
 router.post('/api/request', function (req, res) {
   console.log(req.body, "this is req.body");
@@ -204,7 +216,7 @@ router.post('/api/login', function (req, res, next) {
       return   res.status(200).send(false)
     }
     req.session.user = user.username;
-    let sig = jwt.sign({id: user.username}, "keyboard cat");
+    let sig = jwt.sign({id: user.username}, process.env.JWT_KEY);
     res.status(200)
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
     .send(user.username)
@@ -225,7 +237,7 @@ router.post('/api/signup', function (req, res, next) {
       return res.status(200).send(false)
     }
     req.session.user = user.username;
-    let sig = jwt.sign({id: user.username}, "keyboard cat");
+    let sig = jwt.sign({id: user.username}, process.env.JWT_KEY);
     res.status(200)
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
     .send(user.username)

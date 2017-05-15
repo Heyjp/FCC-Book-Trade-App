@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom'
 
 import Form from '../components/Form.js';
-import {setLoginError, setLoginSuccess} from '../actions/login.js';
+import {setLoginError, setLoginSuccess, setUser} from '../actions/login.js';
 import axios from 'axios';
 
 class AuthContainer extends React.Component {
@@ -14,7 +14,8 @@ class AuthContainer extends React.Component {
     this.state = {
       username: "",
       password: "",
-      route: props.location.pathname
+      route: props.location.pathname,
+      user: props.user
     }
 
     this.route = props.location.pathname
@@ -44,6 +45,7 @@ class AuthContainer extends React.Component {
   handleSubmit (e) {
     e.preventDefault();
     let {username, password, route} = this.state;
+    // Route is taken from  the route props and contains "/", slice to remove it.
     route = route.slice(1, route.length)
     this.promiseCall(username, password, route)
     this.setState({
@@ -54,11 +56,12 @@ class AuthContainer extends React.Component {
 
   promiseCall (username, password, route) {
     let self = this;
-    console.log("promise call being sent")
     axios.post(`/api/${route}`, {username, password}).then(function (res) {
-      console.log(res, "data");
-      self.props.dispatch(setLoginSuccess(true))
-      self.props.dispatch(setLoginError(false))
+
+      // self.props.dispatch(setLoginSuccess(true));
+      // get the username from res.data,
+      // self.props.dispatch(setLoginError(false));
+      self.props.dispatch(setUser(res.data))
     }).catch(function (err) {
       console.error(err, "err")
     })
@@ -67,7 +70,8 @@ class AuthContainer extends React.Component {
 
   render () {
 
-    if (this.props.isLoginSuccess) {
+    // If user is logged in redirect from page
+    if (this.props.user !== false) {
       return (
         <Redirect to='/' />
       )
@@ -91,7 +95,8 @@ const mapStateToProps = (state) => {
   return {
     isLoginPending: state.loginReducer.isLoginPending,
     isLoginSuccess: state.loginReducer.isLoginSuccess,
-    loginError: state.loginReducer.loginError
+    loginError: state.loginReducer.loginError,
+    user: state.loginReducer.user
   };
 }
 
