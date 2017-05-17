@@ -42,8 +42,8 @@ module.exports.addBook = function (user, obj, callback) {
   var newBook = new Trade();
   newBook.firstOwner = user;
   newBook.owner = user;
-  newBook.bookTitle = obj.title;
-  newBook.BookImg = obj.img;
+  newBook.title = obj.title;
+  newBook.image = obj.img;
   newBook.TradeRequest = false;
 
   newBook.save(function (err) {

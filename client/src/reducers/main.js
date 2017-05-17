@@ -11,11 +11,6 @@ const bookApp = (state = {books: []}, action) => {
         ...state,
         modal: action.modal
       }
-    case "SET_USER_LIBRARY":
-      return {
-        ...state,
-        userLibrary: action.userLibrary
-      }
     default:
       return state
   }

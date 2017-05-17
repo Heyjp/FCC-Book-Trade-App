@@ -2,9 +2,9 @@ const loginReducer = (state = {
   isLoginSuccess: false,
   isLoginPending: false,
   loginError: null,
-  user: false
+  user: false,
+  userLibrary: []
 }, action) => {
-  console.log(action, "this is action");
   switch (action.type) {
     case "SET_LOGIN_PENDING":
       return Object.assign({}, state, {
@@ -24,6 +24,10 @@ const loginReducer = (state = {
     case "SET_USER":
       return Object.assign({}, state, {
         user: action.user
+      });
+    case "SET_USER_LIBRARY":
+      return Object.assign({}, state, {
+        userLibrary: action.userLibrary
       });
     default:
       return state;

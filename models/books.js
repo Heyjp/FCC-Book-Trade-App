@@ -4,8 +4,8 @@ var bookSchema = mongoose.Schema({
 
   firstOwner: String,
   owner: String,
-  bookTitle: String,
-  BookImg: String,
+  title: String,
+  image: String,
   TradeRequest: Boolean,
   Requester: String,
 

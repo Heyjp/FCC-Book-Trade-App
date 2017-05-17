@@ -24217,11 +24217,11 @@
 	    isLoginSuccess: false,
 	    isLoginPending: false,
 	    loginError: null,
-	    user: false
+	    user: false,
+	    userLibrary: []
 	  };
 	  var action = arguments[1];
 
-	  console.log(action, "this is action");
 	  switch (action.type) {
 	    case "SET_LOGIN_PENDING":
 	      return (0, _assign2.default)({}, state, {
@@ -24241,6 +24241,10 @@
 	    case "SET_USER":
 	      return (0, _assign2.default)({}, state, {
 	        user: action.user
+	      });
+	    case "SET_USER_LIBRARY":
+	      return (0, _assign2.default)({}, state, {
+	        userLibrary: action.userLibrary
 	      });
 	    default:
 	      return state;
@@ -24784,10 +24788,6 @@
 	      return (0, _extends3.default)({}, state, {
 	        modal: action.modal
 	      });
-	    case "SET_USER_LIBRARY":
-	      return (0, _extends3.default)({}, state, {
-	        userLibrary: action.userLibrary
-	      });
 	    default:
 	      return state;
 	  }
@@ -24877,7 +24877,7 @@
 
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 
-	var _Auth = __webpack_require__(390);
+	var _Auth = __webpack_require__(391);
 
 	var _Auth2 = _interopRequireDefault(_Auth);
 
@@ -32966,7 +32966,7 @@
 	            'Main'
 	          )
 	        ),
-	        _react2.default.createElement(_Book2.default, { books: this.state.books, toggleModal: this.handleClick }),
+	        _react2.default.createElement(_Book2.default, { books: this.state.books, handleClick: this.handleClick }),
 	        this.state.isOpen ? _react2.default.createElement(_Modal2.default, { modal: this.props.modal, reqBook: this.requestBook, closeModal: this.toggleModal }) : ""
 	      );
 	    }
@@ -33008,20 +33008,31 @@
 	    _react2.default.createElement(
 	      "h6",
 	      null,
-	      props.book.bookTitle
+	      props.book.title
 	    ),
-	    _react2.default.createElement("img", { src: props.book.BookImg, width: "150px", height: "200px" })
+	    _react2.default.createElement("img", { src: props.book.image, width: "150px", height: "200px" })
 	  );
 	};
 
 	var BooksList = function BooksList(props) {
-	  return _react2.default.createElement(
-	    "div",
-	    { className: "book-container" },
-	    props.books.map(function (e, i) {
-	      return _react2.default.createElement(Book, { key: i, book: e, handleClick: props.toggleModal.bind(undefined, e, i) });
-	    })
-	  );
+
+	  if (props.handleClick) {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "book-container" },
+	      props.books.map(function (e, i) {
+	        return _react2.default.createElement(Book, { key: i, book: e, handleClick: props.handleClick.bind(undefined, e, i) });
+	      })
+	    );
+	  } else {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "book-container" },
+	      props.books.map(function (e, i) {
+	        return _react2.default.createElement(Book, { key: i, book: e });
+	      })
+	    );
+	  }
 	};
 
 	exports.default = BooksList;
@@ -33233,11 +33244,11 @@
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _login = __webpack_require__(388);
+	var _Requests = __webpack_require__(388);
 
-	var _login2 = _interopRequireDefault(_login);
+	var _Requests2 = _interopRequireDefault(_Requests);
 
-	var _index = __webpack_require__(385);
+	var _login = __webpack_require__(390);
 
 	var _Profile = __webpack_require__(389);
 
@@ -33247,6 +33258,10 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// COMPONENTS
+
+
+	// CONTAINERS
 	var DashBoard = function (_React$Component) {
 	  (0, _inherits3.default)(DashBoard, _React$Component);
 
@@ -33260,16 +33275,20 @@
 	      tabs: ['current', 'request', 'add'],
 	      title: '',
 	      author: '',
-	      searchResults: [],
+	      userLibrary: [],
+	      requestedBook: [],
+	      requests: [1, 2],
 	      user: props.user
-
 	    };
 
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.updateTitle = _this.updateTitle.bind(_this);
 	    _this.updateAuthor = _this.updateAuthor.bind(_this);
+	    _this.getRequests = _this.getRequests.bind(_this);
 	    _this.handleSubmit = _this.handleSubmit.bind(_this);
 	    _this.setUserLibrary = _this.setUserLibrary.bind(_this);
+	    _this.handleBooks = _this.handleBooks.bind(_this);
+	    _this.addBookToCollection = _this.addBookToCollection.bind(_this);
 	    return _this;
 	  }
 
@@ -33277,6 +33296,42 @@
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
 	      this.setUserLibrary();
+	      this.getRequests();
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.setState({ kimsu: "one" });
+	    }
+	  }, {
+	    key: 'addBookToCollection',
+	    value: function addBookToCollection() {
+	      var data = this.state.bookToAdd;
+	      _axios2.default.post('/api/add-book', data).then(function (res) {
+	        console.log(res, "res data on add book axios");
+	      });
+	    }
+	  }, {
+	    key: 'getRequests',
+	    value: function getRequests() {
+	      console.log("getting requests");
+	      var self = this;
+	      _axios2.default.get('/api/get-trades?user=' + this.state.user).then(function (res) {
+	        console.log(res, "get-trades res");
+	        self.setState({
+	          requests: res.data
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'handleBooks',
+	    value: function handleBooks(e, i) {
+	      var data = e;
+	      data.user = this.state.user;
+	      console.log(data, "data on handlebooks");
+	      this.setState({
+	        bookToAdd: data
+	      });
 	    }
 	  }, {
 	    key: 'handleClick',
@@ -33305,10 +33360,8 @@
 	    value: function setUserLibrary() {
 	      var self = this;
 	      var user = this.state.user;
-	      console.log(user, "this is user");
 	      _axios2.default.get('/api/show-library?user=' + user).then(function (res) {
-	        console.log(res, "dashboard getBooks");
-	        // self.props.dispatch(setUserLibrary(res.data))
+	        self.props.dispatch((0, _login.setUserLibrary)(res.data));
 	      }).catch(function (err) {
 	        console.log(err, "this is err");
 	      });
@@ -33322,8 +33375,11 @@
 	          author = _state.author;
 
 	      _axios2.default.post('/api/book-search', { title: title, author: author }).then(function (res) {
+	        console.log(res, "handlesubmit res");
 	        self.setState({
 	          searchResults: res.data
+	        }, function () {
+	          console.log(self.state.searchResults, "this is searchResults after get-books");
 	        });
 	      });
 
@@ -33335,15 +33391,14 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-
 	      var activeComponent = void 0;
 
 	      if (!this.state.active) {
-	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, { books: this.props.books });
+	        activeComponent = _react2.default.createElement(_Book2.default, { books: this.props.userLibrary });
 	      } else if (this.state.active === "current") {
-	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, { books: this.props.books });
+	        activeComponent = _react2.default.createElement(_Book2.default, { books: this.props.userLibrary });
 	      } else if (this.state.active === "request") {
-	        activeComponent = _react2.default.createElement(_Profile.RequestTab, null);
+	        activeComponent = _react2.default.createElement(_Requests2.default, { books: this.state.requests });
 	      } else if (this.state.active === "add") {
 	        activeComponent = _react2.default.createElement(
 	          'div',
@@ -33355,10 +33410,10 @@
 	            updateAuthor: this.updateAuthor,
 	            submitBook: this.handleSubmit
 	          }),
-	          _react2.default.createElement(_Book2.default, { books: this.state.searchResults })
+	          this.state.searchResults && _react2.default.createElement(_Book2.default, { books: this.state.searchResults, handleClick: this.handleBooks })
 	        );
 	      } else {
-	        activeComponent = _react2.default.createElement(_Profile.CurrentBooks, { books: this.props.books });
+	        activeComponent = _react2.default.createElement(BookList, { books: this.props.userLibrary });
 	      }
 
 	      return _react2.default.createElement(
@@ -33375,7 +33430,12 @@
 	            _react2.default.createElement(
 	              'div',
 	              null,
-	              activeComponent
+	              activeComponent,
+	              this.state.active === "add" && _react2.default.createElement(
+	                'button',
+	                { onClick: this.addBookToCollection },
+	                'Add Book'
+	              )
 	            )
 	          )
 	        )
@@ -33385,11 +33445,14 @@
 	  return DashBoard;
 	}(_react2.default.Component);
 
+	// ACTIONS
+
+
 	var mapStateToProps = function mapStateToProps(state) {
-	  console.log(state, "this is state on dashboard");
 	  return {
 	    books: state.collection,
-	    user: state.loginReducer.user
+	    user: state.loginReducer.user,
+	    userLibrary: state.loginReducer.userLibrary
 	  };
 	};
 
@@ -33406,49 +33469,61 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.setUser = setUser;
-	exports.setLoginPending = setLoginPending;
-	exports.setLoginSuccess = setLoginSuccess;
-	exports.setLoginError = setLoginError;
 
-	var _axios = __webpack_require__(353);
+	var _getPrototypeOf = __webpack_require__(264);
 
-	var _axios2 = _interopRequireDefault(_axios);
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(269);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(270);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(274);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(309);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Profile = __webpack_require__(389);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var SET_LOGIN_PENDING = 'SET_LOGIN_PENDING';
-	var SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
-	var SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
-	var SET_USER = 'SET_USER';
+	var RequestContainer = function (_React$Component) {
+	  (0, _inherits3.default)(RequestContainer, _React$Component);
 
-	function setUser(user) {
-	  return {
-	    type: SET_USER,
-	    user: user
-	  };
-	}
+	  function RequestContainer(props) {
+	    (0, _classCallCheck3.default)(this, RequestContainer);
 
-	function setLoginPending(isLoginPending) {
-	  return {
-	    type: SET_LOGIN_PENDING,
-	    isLoginPending: isLoginPending
-	  };
-	}
+	    var _this = (0, _possibleConstructorReturn3.default)(this, (RequestContainer.__proto__ || (0, _getPrototypeOf2.default)(RequestContainer)).call(this, props));
 
-	function setLoginSuccess(isLoginSuccess) {
-	  return {
-	    type: SET_LOGIN_SUCCESS,
-	    isLoginSuccess: isLoginSuccess
-	  };
-	}
+	    console.log(props, "this is props on requestcontainer");
+	    return _this;
+	  }
 
-	function setLoginError(loginError) {
-	  return {
-	    type: SET_LOGIN_ERROR,
-	    loginError: loginError
-	  };
-	}
+	  (0, _createClass3.default)(RequestContainer, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_Profile.RequestTab, { books: this.props.books })
+	      );
+	    }
+	  }]);
+	  return RequestContainer;
+	}(_react2.default.Component);
+
+	exports.default = RequestContainer;
 
 /***/ }),
 /* 389 */
@@ -33459,7 +33534,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.AddBooks = exports.CurrentBooks = exports.RequestTab = exports.OptionBar = exports.Profile = undefined;
+	exports.RequestTab = exports.AddBooks = exports.OptionBar = exports.Profile = undefined;
 
 	var _react = __webpack_require__(1);
 
@@ -33468,6 +33543,10 @@
 	var _axios = __webpack_require__(353);
 
 	var _axios2 = _interopRequireDefault(_axios);
+
+	var _Book = __webpack_require__(383);
+
+	var _Book2 = _interopRequireDefault(_Book);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33501,65 +33580,6 @@
 	  );
 	};
 
-	var RequestTab = exports.RequestTab = function RequestTab() {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'h4',
-	      null,
-	      'Requests'
-	    ),
-	    _react2.default.createElement(
-	      'ul',
-	      null,
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        'Book'
-	      )
-	    )
-	  );
-	};
-
-	var CurrentBooks = exports.CurrentBooks = function CurrentBooks(props) {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'h4',
-	      null,
-	      'Current Books'
-	    ),
-	    _react2.default.createElement(
-	      'ul',
-	      null,
-	      props.books.map(function (e) {
-	        return _react2.default.createElement(
-	          'li',
-	          null,
-	          e
-	        );
-	      })
-	    )
-	  );
-	};
-
 	var AddBooks = exports.AddBooks = function AddBooks(props) {
 	  return _react2.default.createElement(
 	    'div',
@@ -33583,8 +33603,84 @@
 	  );
 	};
 
+	var RequestTab = exports.RequestTab = function RequestTab(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'h4',
+	      null,
+	      'Requests'
+	    ),
+	    props.books.length > 1 && _react2.default.createElement(_Book2.default, { books: props.books }),
+	    props.books.length > 1 && _react2.default.createElement(_Book2.default, { books: props.books })
+	  );
+	};
+
 /***/ }),
 /* 390 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.setUser = setUser;
+	exports.setUserLibrary = setUserLibrary;
+	exports.setLoginPending = setLoginPending;
+	exports.setLoginSuccess = setLoginSuccess;
+	exports.setLoginError = setLoginError;
+
+	var _axios = __webpack_require__(353);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SET_LOGIN_PENDING = 'SET_LOGIN_PENDING';
+	var SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
+	var SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
+	var SET_USER = 'SET_USER';
+	var SET_USER_LIBRARY = 'SET_USER_LIBRARY';
+
+	function setUser(user) {
+	  return {
+	    type: SET_USER,
+	    user: user
+	  };
+	}
+
+	function setUserLibrary(userLibrary) {
+	  return {
+	    type: SET_USER_LIBRARY,
+	    userLibrary: userLibrary
+	  };
+	}
+
+	function setLoginPending(isLoginPending) {
+	  return {
+	    type: SET_LOGIN_PENDING,
+	    isLoginPending: isLoginPending
+	  };
+	}
+
+	function setLoginSuccess(isLoginSuccess) {
+	  return {
+	    type: SET_LOGIN_SUCCESS,
+	    isLoginSuccess: isLoginSuccess
+	  };
+	}
+
+	function setLoginError(loginError) {
+	  return {
+	    type: SET_LOGIN_ERROR,
+	    loginError: loginError
+	  };
+	}
+
+/***/ }),
+/* 391 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33621,11 +33717,11 @@
 
 	var _reactRouterDom = __webpack_require__(317);
 
-	var _Form = __webpack_require__(391);
+	var _Form = __webpack_require__(392);
 
 	var _Form2 = _interopRequireDefault(_Form);
 
-	var _login = __webpack_require__(388);
+	var _login = __webpack_require__(390);
 
 	var _axios = __webpack_require__(353);
 
@@ -33744,7 +33840,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(AuthContainer);
 
 /***/ }),
-/* 391 */
+/* 392 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";

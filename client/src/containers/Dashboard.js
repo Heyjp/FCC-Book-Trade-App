@@ -2,11 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import loginAuth from '../actions/login.js'
+// CONTAINERS
+import RequestContainer from './Requests.js'
 
-import {setUserLibrary} from "../actions/index.js"
+// ACTIONS
+import {setUserLibrary} from '../actions/login.js'
+
+// COMPONENTS
 import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
-import BookList from '../components/Book.js';
+import BooksList from '../components/Book.js';
 
 
 class DashBoard extends React.Component {
@@ -17,20 +21,58 @@ class DashBoard extends React.Component {
       tabs: ['current', 'request', 'add'],
       title: '',
       author: '',
-      searchResults: [],
+      userLibrary: [],
+      requestedBook: [],
+      requests: [1, 2],
       user: props.user
-
     }
 
     this.handleClick = this.handleClick.bind(this);
     this.updateTitle = this.updateTitle.bind(this);
     this.updateAuthor = this.updateAuthor.bind(this);
+    this.getRequests = this.getRequests.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.setUserLibrary = this.setUserLibrary.bind(this);
+    this.handleBooks = this.handleBooks.bind(this);
+    this.addBookToCollection = this.addBookToCollection.bind(this);
   }
 
   componentWillMount () {
     this.setUserLibrary();
+    this.getRequests();
+  }
+
+  componentDidMount () {
+    this.setState({ kimsu: "one"})
+  }
+
+  addBookToCollection () {
+    let data = this.state.bookToAdd;
+    axios.post('/api/add-book', data)
+      .then(function (res) {
+        console.log(res, "res data on add book axios")
+      })
+  }
+
+  getRequests () {
+    console.log("getting requests")
+    let self = this;
+    axios.get(`/api/get-trades?user=${this.state.user}`)
+      .then(function (res) {
+        console.log(res, "get-trades res");
+        self.setState({
+          requests: res.data
+        })
+      })
+  }
+
+  handleBooks (e, i) {
+    let data = e;
+    data.user = this.state.user;
+    console.log(data, "data on handlebooks")
+    this.setState({
+      bookToAdd: data
+    })
   }
 
   handleClick (i) {
@@ -52,14 +94,13 @@ class DashBoard extends React.Component {
     })
   }
 
+
   setUserLibrary () {
     let self = this;
     let user = this.state.user;
-    console.log(user, "this is user");
     axios.get(`/api/show-library?user=${user}`)
       .then(function (res) {
-        console.log(res, "dashboard getBooks")
-        // self.props.dispatch(setUserLibrary(res.data))
+        self.props.dispatch(setUserLibrary(res.data))
       }).catch(function (err) {
         console.log(err, "this is err");
       })
@@ -70,8 +111,11 @@ class DashBoard extends React.Component {
     const {title, author} = this.state;
     axios.post('/api/book-search', {title, author})
     .then(function (res) {
+      console.log(res, "handlesubmit res");
       self.setState({
         searchResults: res.data
+      }, function () {
+        console.log(self.state.searchResults, "this is searchResults after get-books");
       })
     })
 
@@ -82,31 +126,29 @@ class DashBoard extends React.Component {
   }
 
   render() {
-
     let activeComponent;
 
-
     if (!this.state.active) {
-      activeComponent = <CurrentBooks books={this.props.books} />
+      activeComponent = <BooksList books={this.props.userLibrary}  />
     } else if (this.state.active === "current") {
-      activeComponent = <CurrentBooks books={this.props.books} />
+      activeComponent = <BooksList books={this.props.userLibrary}  />
     } else if (this.state.active === "request") {
-      activeComponent = <RequestTab />
+      activeComponent = <RequestContainer books={this.state.requests} />
     } else if (this.state.active === "add") {
       activeComponent =  (
         <div>
           <AddBooks
-                                 title={this.state.title}
-                                 author={this.state.author}
-                                 updateTitle={this.updateTitle}
-                                 updateAuthor={this.updateAuthor}
-                                 submitBook={this.handleSubmit}
-                                 />
-          <BookList books={this.state.searchResults} />
+           title={this.state.title}
+           author={this.state.author}
+           updateTitle={this.updateTitle}
+           updateAuthor={this.updateAuthor}
+           submitBook={this.handleSubmit}
+           />
+          {this.state.searchResults && <BooksList books={this.state.searchResults} handleClick={this.handleBooks} />}
         </div>
       )
     } else {
-      activeComponent = <CurrentBooks books={this.props.books} />
+      activeComponent = <BookList books={this.props.userLibrary} />
     }
 
       return (
@@ -117,6 +159,7 @@ class DashBoard extends React.Component {
               <OptionBar tabs={this.state.tabs} handleClick={this.handleClick} />
               <div>
                 {activeComponent}
+                {this.state.active === "add" && <button onClick={this.addBookToCollection}>Add Book</button>}
               </div>
             </div>
           </div>
@@ -127,10 +170,10 @@ class DashBoard extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state, "this is state on dashboard");
   return {
     books: state.collection,
-    user: state.loginReducer.user
+    user: state.loginReducer.user,
+    userLibrary: state.loginReducer.userLibrary
   }
 }
 

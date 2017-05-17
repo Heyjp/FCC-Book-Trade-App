@@ -191,7 +191,7 @@ router.get('/api/show-library', function (req, res) {
 });
 
 
-router.post('/api/request', function (req, res) {
+router.post('/api/request-book', function (req, res) {
   console.log(req.body, "this is req.body");
 /*
   Trade.requestTrade(user, data, function (err, success) {
@@ -244,6 +244,26 @@ router.post('/api/signup', function (req, res, next) {
   })(req, res, next);
 });
 
+router.get('/api/get-trades', function (req, res) {
+    console.log(req.query.user, "get-trades info")
+    let user = req.query.user
+
+    Trade.findIncTrades(user, function (err, trades) {
+      var incTrades = trades;
+      if (err) {
+        console.error(err);
+      }
+
+      Trade.findOutTrades(user, function (err, requests) {
+        var outTrades = requests;
+        if (err) {
+          console.error(err);
+        }
+          res.send({incTrades, outTrades});
+      });
+    });
+});
+
 router.post('/api/book-search', function (req, res) {
 
   const title = req.body.title;
@@ -262,15 +282,35 @@ router.post('/api/book-search', function (req, res) {
     if (error) {
       console.log(err);
     } else if (!error && response.statusCode == 200) {
+       // Take googlebooks data and parse it for use
+       let bookResults = JSON.parse(body);
 
-       var json = JSON.parse(body);
-       var list = createBookList(json);
-
-       res.status(200).send(list);
+       // if the search comes up with no items send false response to user
+       if (bookResults.totalItems === 0) {
+         console.log("no items in search")
+         return res.status(500).send(false);
+       }
+       // If 1 or more items is returned filter object to return infomation
+       let list = createBookList(bookResults);
+       res.status(200).send(list)
+       // return res.status(200).send(list);
     }
   })
 });
 
+
+router.post('/api/add-book', function (req, res) {
+
+  let data = req.body;
+  console.log(data, "this is req.body on add-book server")
+  /*
+  Trade.addBook(user, data, function (err, info) {
+    if (err) {
+    }
+    res.status(200).send("successRedirect");
+  });
+  */
+});
 /*
 
 app.get('/login', function(req, res, next) {
@@ -287,20 +327,26 @@ app.get('/login', function(req, res, next) {
 
 module.exports = router;
 
+/*
 
-function createBookList (list) {
-  let newArray = [];
-  list.items.forEach(function(ele) {
+obj.image = ele.volumeInfo.imageLinks.thumbnail;
+} else {
+
+*/
+
+function createBookList (itemList) {
+  let booksArray = [];
+  itemList.items.forEach(function(e) {
     let obj = {};
-    if (ele.volumeInfo.imageLinks.thumbnail) {
-      obj.image = ele.volumeInfo.imageLinks.thumbnail;
-    } else {
-      obj.image = "http://www.themagickalcat.com/v/vspfiles/photos/BBBUB5-2T.jpg";
-    }
+    obj.title = e.volumeInfo.title;
+    obj.author = e.volumeInfo.authors;
 
-    obj.title = ele.volumeInfo.title;
-    obj.author = ele.volumeInfo.authors;
-    newArray.push(obj);
+    if (!e.volumeInfo.imageLinks) {
+      obj.image = "http://www.themagickalcat.com/v/vspfiles/photos/BBBUB5-2T.jpg";
+    } else {
+      obj.image = e.volumeInfo.imageLinks.thumbnail;
+    }
+    booksArray.push(obj);
   })
-  return newArray;
+  return booksArray;
 }

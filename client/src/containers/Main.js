@@ -72,7 +72,7 @@ class Main extends React.Component {
         <div>
           <p>Main</p>
         </div>
-        <BooksList books={this.state.books} toggleModal={this.handleClick} />
+        <BooksList books={this.state.books} handleClick={this.handleClick} />
         {
           this.state.isOpen ? <Modal modal={this.props.modal} reqBook={this.requestBook} closeModal={this.toggleModal}/> : ""
         }
