@@ -32902,6 +32902,7 @@
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.toggleModal = _this.toggleModal.bind(_this);
 	    _this.getBooks = _this.getBooks.bind(_this);
+	    _this.requestBook = _this.requestBook.bind(_this);
 	    return _this;
 	  }
 
@@ -32923,7 +32924,10 @@
 	    value: function getBooks() {
 	      var self = this;
 	      _axios2.default.get('/api/books').then(function (res) {
+	        console.log(res.data, "info on get books");
 	        self.props.dispatch((0, _index.setLibrary)(res.data));
+	      }, function (err) {
+	        console.log(err, "this is err on get book");
 	      }).catch(function (err) {
 	        console.log(err, "this is err");
 	      });
@@ -32947,13 +32951,18 @@
 	    key: 'requestBook',
 	    value: function requestBook(object, e) {
 	      e.stopPropagation();
-	      _axios2.default.post('/api/request', object).then(function (res) {
+	      var userData = object;
+	      userData.user = this.props.user;
+	      _axios2.default.post('/api/request-book', userData).then(function (res) {
 	        console.log(res, "this is res on requestBook");
+	      }, function (err) {
+	        console.log(err, "this is err on get book");
 	      });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      console.log(this.state.books, "books on main container");
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'main-container' },
@@ -32977,7 +32986,8 @@
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
 	    books: state.bookApp.books,
-	    modal: state.bookApp.modal
+	    modal: state.bookApp.modal,
+	    user: state.loginReducer.user
 	  };
 	};
 
@@ -33015,7 +33025,7 @@
 	};
 
 	var BooksList = function BooksList(props) {
-
+	  console.log(props, "props on bookslist");
 	  if (props.handleClick) {
 	    return _react2.default.createElement(
 	      "div",
@@ -33494,6 +33504,12 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _axios = __webpack_require__(353);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _reactRedux = __webpack_require__(182);
+
 	var _Profile = __webpack_require__(389);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -33507,23 +33523,58 @@
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (RequestContainer.__proto__ || (0, _getPrototypeOf2.default)(RequestContainer)).call(this, props));
 
 	    console.log(props, "this is props on requestcontainer");
+
+	    _this.acceptTrade = _this.acceptTrade.bind(_this);
 	    return _this;
 	  }
 
+	  // Make 3 requests, accept and reject incoming requests
+	  // Cancel outgoing requests
+
+
 	  (0, _createClass3.default)(RequestContainer, [{
+	    key: 'acceptTrade',
+	    value: function acceptTrade(data) {
+	      console.log(data, "this is data on accepttrade");
+	      var user = this.props.user;
+	      _axios2.default.post('/api/accept-trade?user=' + user, data).then(function (res) {
+	        console.log(res, "this is res");
+	      });
+	    }
+	  }, {
+	    key: 'rejectTrade',
+	    value: function rejectTrade(data) {}
+	  }, {
+	    key: 'cancelBookRequest',
+	    value: function cancelBookRequest(data) {}
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement(_Profile.RequestTab, { books: this.props.books })
+	        _react2.default.createElement(_Profile.RequestTab, {
+	          books: this.props.books,
+	          acceptTrade: this.acceptTrade,
+	          rejectTrade: this.rejectTrade,
+	          cancelReq: this.cancelBookRequest
+	        })
 	      );
 	    }
 	  }]);
 	  return RequestContainer;
 	}(_react2.default.Component);
 
-	exports.default = RequestContainer;
+	var mapStateToProps = function mapStateToProps(state) {
+	  console.log(state, "this is state on mainjs");
+	  return {
+	    user: state.loginReducer.user
+	  };
+	};
+
+	var Container = (0, _reactRedux.connect)(mapStateToProps)(RequestContainer);
+
+	exports.default = Container;
 
 /***/ }),
 /* 389 */
@@ -33612,8 +33663,33 @@
 	      null,
 	      'Requests'
 	    ),
-	    props.books.length > 1 && _react2.default.createElement(_Book2.default, { books: props.books }),
-	    props.books.length > 1 && _react2.default.createElement(_Book2.default, { books: props.books })
+	    props.books.inc.length >= 1 && _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'h6',
+	        null,
+	        'Incoming Requests'
+	      ),
+	      _react2.default.createElement(_Book2.default, {
+	        books: props.books.inc,
+	        key: 1,
+	        handleClick: props.acceptTrade
+	      })
+	    ),
+	    props.books.out.length >= 1 && _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'h6',
+	        null,
+	        'Requested Trades'
+	      ),
+	      _react2.default.createElement(_Book2.default, {
+	        books: props.books.out,
+	        key: 2,
+	        handleClick: props.cancelReq })
+	    )
 	  );
 	};
 

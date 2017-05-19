@@ -4,31 +4,19 @@ var Trade = require('../models/books.js');
 module.exports = {};
 
 
-module.exports.booksAvailable = function (user, callback) {
+module.exports.booksAvailable = function (data, callback) {
 
-  if (user !== null) {
-  Trade.find({}, "owner bookTitle BookImg TradeRequest", function (err, doc) {
+  Trade.find({}, "title image owner", function (err, doc) {
     if (err) {
       callback(err);
     }
-      var filteredObj = filterUser(user, doc);
-      callback(null, filteredObj);
+    callback(null, doc);
   });
-
-} else {
-
-  Trade.find({}, "bookTitle BookImg", function (err, doc) {
-    if (err) {
-      callback(err);
-    }
-      callback(null, doc);
-  });
-  }
 }
 
 module.exports.showLibrary = function (user, callback) {
 
-  Trade.find({owner: user}, "bookTitle BookImg", function (err, doc) {
+  Trade.find({owner: user}, "title image", function (err, doc) {
     if (err) {
       callback(err);
     }
@@ -43,7 +31,7 @@ module.exports.addBook = function (user, obj, callback) {
   newBook.firstOwner = user;
   newBook.owner = user;
   newBook.title = obj.title;
-  newBook.image = obj.img;
+  newBook.image = obj.image;
   newBook.TradeRequest = false;
 
   newBook.save(function (err) {
@@ -55,15 +43,19 @@ module.exports.addBook = function (user, obj, callback) {
 }
 
 // Take a Book from the selection and ask for trade
-module.exports.requestTrade = function (user, obj, callback) {
+module.exports.requestTrade = function (obj, callback) {
 
-Trade.update({ _id: obj.id }, {TradeRequest: true, Requester: user }, function (err, doc) {
-  if (err) {
-    callback(err);
+  if (obj.owner === obj.user ) {
+    return callback(false)
   }
-  var obj = doc;
 
-  callback(null, doc);
+Trade.update({ _id: obj._id }, {TradeRequest: true, Requester: obj.user }, function (err, data) {
+
+  if (err) {
+  return callback(err);
+  }
+
+  return callback(null, data);
 });
 }
 
@@ -73,7 +65,7 @@ Trade.update({ _id: obj.id }, {TradeRequest: true, Requester: user }, function (
         if (err) {
           callback(err);
         }
-        callback(null, doc);
+        return callback(null, doc);
     })
   }
 
@@ -81,42 +73,55 @@ Trade.update({ _id: obj.id }, {TradeRequest: true, Requester: user }, function (
   module.exports.findOutTrades = function (user, callback) {
     Trade.find({Requester: user}, function (err, doc) {
         if (err) {
-          callback(err);
+        return callback(err);
         }
-        callback(null, doc);
+      return callback(null, doc);
     })
   }
 
   // Accept or cancel trade requests
-  module.exports.handleTradeRequest = function (obj, user, callback) {
-      console.log("trade request handling", obj);
+  module.exports.handleTradeRequest = function (data, user, callback) {
+    /*
+      console.log("trade request handling", data, user);
         if (obj.cancel === true) {
           console.log("cancel running");
-          Trade.update({ _id: obj.id, BookTitle: obj.title }, {TradeRequest: false, Requester: undefined}, function (err, doc) {
+          Trade.update({ _id: obj.id, title: obj.title }, {TradeRequest: false, Requester: null}, function (err, doc) {
             if (err) {
               callback(err);
             }
             callback(null, doc);
           })
-        } else {
-          console.log("trade request aceepted, running the accept");
-          Trade.find({_id: obj.id}, function (err, info) {
+        }
+    */
+    console.log(data, user, "data and user on handleTradeRequest.")
+
+    if (data.cancel) {
+      console.log("cancel running");
+      Trade.update({ _id: obj.id, title: obj.title }, {TradeRequest: false, Requester: null}, function (err, doc) {
+        if (err) {
+          callback(err);
+        }
+        callback(null, doc);
+      })
+    } else {
+
+      Trade.find({_id: data._id}, function (err, file) {
+        console.log(file, "file, in trade.find")
+        let newUser = file[0].Requester;
+
+        Trade.update({ _id: data._id, Requester: newUser},
+          {owner: newUser, TradeRequest: false, Requester: null},
+          function (err, data) {
             if (err) {
               console.log(err);
+              callback(err);
             }
-            console.log("trade accepted", info);
-            console.log("=================================================================");
-            var newUser = info[0].Requester;
-
-            Trade.update({ _id: obj.id}, {owner: newUser, TradeRequest: false, Requester: undefined}, function (err, doc) {
-              if (err) {
-                callback(err);
-              }
-              callback(null, doc);
-            });
-          });
-        }
+              callback(null, data);
+          }
+        )
+      })
     }
+  }
 
   module.exports.cancelBookRequest = function (user, book, callback) {
 

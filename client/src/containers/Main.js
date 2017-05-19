@@ -21,6 +21,7 @@ class Main extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.getBooks = this.getBooks.bind(this);
+    this.requestBook = this.requestBook.bind(this);
   }
 
   componentWillMount () {
@@ -38,7 +39,10 @@ class Main extends React.Component {
     let self = this;
     axios.get('/api/books')
       .then(function (res) {
+        console.log(res.data, "info on get books")
         self.props.dispatch(setLibrary(res.data))
+      }, function (err) {
+        console.log(err, "this is err on get book")
       }).catch(function (err) {
         console.log(err, "this is err");
       })
@@ -60,13 +64,18 @@ class Main extends React.Component {
 
   requestBook (object, e) {
     e.stopPropagation();
-    axios.post('/api/request', object)
+    let userData = object;
+    userData.user = this.props.user;
+    axios.post('/api/request-book', userData)
       .then(function (res) {
         console.log(res, "this is res on requestBook")
+      }, function (err) {
+        console.log(err, "this is err on get book")
       })
   }
 
   render () {
+    console.log(this.state.books, "books on main container")
     return (
       <div className="main-container">
         <div>
@@ -85,7 +94,8 @@ class Main extends React.Component {
 const mapStateToProps = (state) => {
   return {
     books: state.bookApp.books,
-    modal: state.bookApp.modal
+    modal: state.bookApp.modal,
+    user: state.loginReducer.user
   }
 }
 

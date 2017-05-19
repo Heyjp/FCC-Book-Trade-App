@@ -8,7 +8,7 @@ const Book = (props) => (
 )
 
 const BooksList = (props) => {
-
+  console.log(props, "props on bookslist")
   if (props.handleClick) {
     return (
       <div className="book-container">

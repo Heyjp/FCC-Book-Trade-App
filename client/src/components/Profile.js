@@ -31,9 +31,24 @@ export const AddBooks = (props) => (
 )
 
 export const RequestTab = (props) => (
-  <div>
-    <h4>Requests</h4>
-    {props.books.length > 1 && <BooksList books={props.books} />}
-    {props.books.length > 1 && <BooksList books={props.books} />}
-  </div>
-)
+    <div>
+      <h4>Requests</h4>
+        {props.books.inc.length >= 1 && <div>
+          <h6>Incoming Requests</h6>
+          <BooksList
+            books={props.books.inc}
+            key={1}
+            handleClick={props.acceptTrade}
+          />
+         </div>
+       }
+        {props.books.out.length >= 1 && <div>
+                                          <h6>Requested Trades</h6>
+                                          <BooksList
+                                            books={props.books.out}
+                                            key={2}
+                                            handleClick={props.cancelReq}/>
+                                        </div>
+        }
+    </div>
+  )

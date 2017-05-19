@@ -129,7 +129,7 @@ router.post('/requestbook', function (req, res) {
 });
 
 
-router.post('/accept-trade', function(req, res) {
+router.post('/api/accept-trade', function(req, res) {
   var data = req.body;
   var user = req.user.username;
   data.cancel = false;
@@ -192,15 +192,34 @@ router.get('/api/show-library', function (req, res) {
 
 
 router.post('/api/request-book', function (req, res) {
-  console.log(req.body, "this is req.body");
-/*
-  Trade.requestTrade(user, data, function (err, success) {
+  let data = req.body;
+  Trade.requestTrade(data, function (err, success) {
     if (err) {
-      console.log(err);
-    }
-    res.send("successfully requested");
+    console.log(err);
+    return res.status(400).send(err);
+  } else if (!success) {
+    return res.status(400).send("You already have that book");
+  }
+
+    return res.send("successfully requested");
   })
-*/
+
+});
+
+router.post('/api/accept-trade', function(req, res) {
+
+  let data = req.body;
+  data.cancel = false;
+  let user = req.query.user;
+
+  Trade.handleTradeRequest(data, user, function (err, success) {
+    if (err) {
+    return   console.log(err);
+    }
+    console.log(success, "this is success");
+    return  res.status(200).send("accepted trade");
+  });
+
 });
 
 router.post('/api/login', function (req, res, next) {
@@ -238,28 +257,27 @@ router.post('/api/signup', function (req, res, next) {
     }
     req.session.user = user.username;
     let sig = jwt.sign({id: user.username}, process.env.JWT_KEY);
-    res.status(200)
+    return res.status(200)
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
-    .send(user.username)
+    .send(user.username);
   })(req, res, next);
 });
 
 router.get('/api/get-trades', function (req, res) {
-    console.log(req.query.user, "get-trades info")
     let user = req.query.user
 
     Trade.findIncTrades(user, function (err, trades) {
       var incTrades = trades;
       if (err) {
-        console.error(err);
+        return console.error(err);
       }
 
       Trade.findOutTrades(user, function (err, requests) {
         var outTrades = requests;
         if (err) {
-          console.error(err);
+        return  console.error(err);
         }
-          res.send({incTrades, outTrades});
+        return  res.status(200).send({inc: incTrades, out: outTrades});
       });
     });
 });
@@ -301,15 +319,17 @@ router.post('/api/book-search', function (req, res) {
 
 router.post('/api/add-book', function (req, res) {
 
+  // Remove user from body object and take from JSON web Token
   let data = req.body;
   console.log(data, "this is req.body on add-book server")
-  /*
-  Trade.addBook(user, data, function (err, info) {
+
+  Trade.addBook(data.user, data, function (err, info) {
     if (err) {
+      console.log(err);
     }
     res.status(200).send("successRedirect");
   });
-  */
+
 });
 /*
 
