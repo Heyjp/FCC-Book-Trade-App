@@ -97,7 +97,7 @@ Trade.update({ _id: obj._id }, {TradeRequest: true, Requester: obj.user }, funct
 
     if (data.cancel) {
       console.log("cancel running");
-      Trade.update({ _id: obj.id, title: obj.title }, {TradeRequest: false, Requester: null}, function (err, doc) {
+      Trade.update({ _id: data._id, title: data.title }, {TradeRequest: false, Requester: null}, function (err, doc) {
         if (err) {
           callback(err);
         }

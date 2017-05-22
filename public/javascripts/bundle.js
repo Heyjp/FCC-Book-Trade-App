@@ -24246,6 +24246,10 @@
 	      return (0, _assign2.default)({}, state, {
 	        userLibrary: action.userLibrary
 	      });
+	    case "SET_REQUEST_MODAL":
+	      return (0, _assign2.default)({}, state, {
+	        requestModal: action.requestModal
+	      });
 	    default:
 	      return state;
 	  }
@@ -33025,8 +33029,7 @@
 	};
 
 	var BooksList = function BooksList(props) {
-	  console.log(props, "props on bookslist");
-	  if (props.handleClick) {
+	  if (props.handleClick && !props.cancelClick) {
 	    return _react2.default.createElement(
 	      "div",
 	      { className: "book-container" },
@@ -33064,6 +33067,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Modal = function Modal(props) {
+	  console.log(props, "this is props on Modal");
+	  var self = undefined;
 	  return _react2.default.createElement(
 	    "div",
 	    { className: "modal", onClick: props.closeModal.bind(undefined) },
@@ -33073,9 +33078,9 @@
 	      _react2.default.createElement(
 	        "h4",
 	        null,
-	        props.modal.bookTitle
+	        props.modal.title
 	      ),
-	      _react2.default.createElement("img", { src: props.modal.BookImg, width: "100px", height: "150px;" }),
+	      _react2.default.createElement("img", { src: props.modal.image, width: "100px", height: "150px;" }),
 	      _react2.default.createElement(
 	        "div",
 	        null,
@@ -33087,8 +33092,17 @@
 	            null,
 	            _react2.default.createElement(
 	              "a",
-	              { onClick: props.reqBook.bind(undefined, props.modal) },
+	              { onClick: props.handleClick.bind(undefined, "accept") },
 	              "Request Book"
+	            )
+	          ),
+	          _react2.default.createElement(
+	            "li",
+	            null,
+	            _react2.default.createElement(
+	              "a",
+	              { onClick: props.handleClick.bind(undefined, "cancel") },
+	              "Cancel Request"
 	            )
 	          )
 	        )
@@ -33098,6 +33112,8 @@
 	};
 
 	exports.default = Modal;
+
+	// onClick={props.reqBook.bind(this, props.modal)}
 
 /***/ }),
 /* 385 */
@@ -33258,9 +33274,9 @@
 
 	var _Requests2 = _interopRequireDefault(_Requests);
 
-	var _login = __webpack_require__(390);
+	var _login = __webpack_require__(389);
 
-	var _Profile = __webpack_require__(389);
+	var _Profile = __webpack_require__(390);
 
 	var _Book = __webpack_require__(383);
 
@@ -33510,7 +33526,15 @@
 
 	var _reactRedux = __webpack_require__(182);
 
-	var _Profile = __webpack_require__(389);
+	var _login = __webpack_require__(389);
+
+	var _index = __webpack_require__(385);
+
+	var _Profile = __webpack_require__(390);
+
+	var _Modal = __webpack_require__(384);
+
+	var _Modal2 = _interopRequireDefault(_Modal);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33522,9 +33546,13 @@
 
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (RequestContainer.__proto__ || (0, _getPrototypeOf2.default)(RequestContainer)).call(this, props));
 
-	    console.log(props, "this is props on requestcontainer");
+	    _this.handleReq = _this.handleReq.bind(_this);
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.toggleModal = _this.toggleModal.bind(_this);
 
-	    _this.acceptTrade = _this.acceptTrade.bind(_this);
+	    _this.state = {
+	      isOpen: false
+	    };
 	    return _this;
 	  }
 
@@ -33533,31 +33561,51 @@
 
 
 	  (0, _createClass3.default)(RequestContainer, [{
-	    key: 'acceptTrade',
-	    value: function acceptTrade(data) {
-	      console.log(data, "this is data on accepttrade");
+	    key: 'handleReq',
+	    value: function handleReq(option, e) {
+	      e.stopPropagation();
+	      var data = this.props.modal;
 	      var user = this.props.user;
-	      _axios2.default.post('/api/accept-trade?user=' + user, data).then(function (res) {
+
+	      option === "accept" ? _axios2.default.post('/api/accept-trade?user=' + user, data).then(function (res) {
+	        console.log(res, "this is res");
+	      }) : _axios2.default.post('/api/cancel-trade?user=' + user, data).then(function (res) {
 	        console.log(res, "this is res");
 	      });
 	    }
 	  }, {
-	    key: 'rejectTrade',
-	    value: function rejectTrade(data) {}
+	    key: 'toggleModal',
+	    value: function toggleModal(e) {
+	      this.state.isOpen ? this.setState({
+	        isOpen: false
+	      }) : this.setState({
+	        isOpen: true
+	      });
+	    }
 	  }, {
-	    key: 'cancelBookRequest',
-	    value: function cancelBookRequest(data) {}
+	    key: 'handleClick',
+	    value: function handleClick(modal) {
+	      console.log("handleClick requestContainer", modal);
+	      this.props.dispatch((0, _login.setReqModal)(modal));
+	      this.toggleModal();
+	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var isActive = this.state.isOpen;
+	      var acceptOrCancel = this.props.modal === this.props.user;
 	      return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(_Profile.RequestTab, {
 	          books: this.props.books,
-	          acceptTrade: this.acceptTrade,
-	          rejectTrade: this.rejectTrade,
-	          cancelReq: this.cancelBookRequest
+	          handleClick: this.handleClick
+	        }),
+	        isActive && _react2.default.createElement(_Modal2.default, {
+	          modal: this.props.modal,
+	          closeModal: this.toggleModal,
+	          handleClick: this.handleReq,
+	          owner: acceptOrCancel
 	        })
 	      );
 	    }
@@ -33566,9 +33614,10 @@
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(state) {
-	  console.log(state, "this is state on mainjs");
+	  console.log(state, "this is state on requestContainer");
 	  return {
-	    user: state.loginReducer.user
+	    user: state.loginReducer.user,
+	    modal: state.loginReducer.requestModal
 	  };
 	};
 
@@ -33578,6 +33627,78 @@
 
 /***/ }),
 /* 389 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.setUser = setUser;
+	exports.setUserLibrary = setUserLibrary;
+	exports.setLoginPending = setLoginPending;
+	exports.setLoginSuccess = setLoginSuccess;
+	exports.setLoginError = setLoginError;
+	exports.setReqModal = setReqModal;
+
+	var _axios = __webpack_require__(353);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SET_LOGIN_PENDING = 'SET_LOGIN_PENDING';
+	var SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
+	var SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
+	var SET_USER = 'SET_USER';
+	var SET_USER_LIBRARY = 'SET_USER_LIBRARY';
+	var SET_REQUEST_MODAL = "SET_REQUEST_MODAL";
+
+	function setUser(user) {
+	  return {
+	    type: SET_USER,
+	    user: user
+	  };
+	}
+
+	function setUserLibrary(userLibrary) {
+	  return {
+	    type: SET_USER_LIBRARY,
+	    userLibrary: userLibrary
+	  };
+	}
+
+	function setLoginPending(isLoginPending) {
+	  return {
+	    type: SET_LOGIN_PENDING,
+	    isLoginPending: isLoginPending
+	  };
+	}
+
+	function setLoginSuccess(isLoginSuccess) {
+	  return {
+	    type: SET_LOGIN_SUCCESS,
+	    isLoginSuccess: isLoginSuccess
+	  };
+	}
+
+	function setLoginError(loginError) {
+	  return {
+	    type: SET_LOGIN_ERROR,
+	    loginError: loginError
+	  };
+	}
+
+	function setReqModal(requestModal) {
+	  console.log(requestModal, "this is action setReqModal");
+	  return {
+	    type: SET_REQUEST_MODAL,
+	    requestModal: requestModal
+	  };
+	}
+
+/***/ }),
+/* 390 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33674,7 +33795,7 @@
 	      _react2.default.createElement(_Book2.default, {
 	        books: props.books.inc,
 	        key: 1,
-	        handleClick: props.acceptTrade
+	        handleClick: props.handleClick
 	      })
 	    ),
 	    props.books.out.length >= 1 && _react2.default.createElement(
@@ -33688,72 +33809,11 @@
 	      _react2.default.createElement(_Book2.default, {
 	        books: props.books.out,
 	        key: 2,
-	        handleClick: props.cancelReq })
+	        handleClick: props.handleClick
+	      })
 	    )
 	  );
 	};
-
-/***/ }),
-/* 390 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.setUser = setUser;
-	exports.setUserLibrary = setUserLibrary;
-	exports.setLoginPending = setLoginPending;
-	exports.setLoginSuccess = setLoginSuccess;
-	exports.setLoginError = setLoginError;
-
-	var _axios = __webpack_require__(353);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var SET_LOGIN_PENDING = 'SET_LOGIN_PENDING';
-	var SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
-	var SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
-	var SET_USER = 'SET_USER';
-	var SET_USER_LIBRARY = 'SET_USER_LIBRARY';
-
-	function setUser(user) {
-	  return {
-	    type: SET_USER,
-	    user: user
-	  };
-	}
-
-	function setUserLibrary(userLibrary) {
-	  return {
-	    type: SET_USER_LIBRARY,
-	    userLibrary: userLibrary
-	  };
-	}
-
-	function setLoginPending(isLoginPending) {
-	  return {
-	    type: SET_LOGIN_PENDING,
-	    isLoginPending: isLoginPending
-	  };
-	}
-
-	function setLoginSuccess(isLoginSuccess) {
-	  return {
-	    type: SET_LOGIN_SUCCESS,
-	    isLoginSuccess: isLoginSuccess
-	  };
-	}
-
-	function setLoginError(loginError) {
-	  return {
-	    type: SET_LOGIN_ERROR,
-	    loginError: loginError
-	  };
-	}
 
 /***/ }),
 /* 391 */
@@ -33797,7 +33857,7 @@
 
 	var _Form2 = _interopRequireDefault(_Form);
 
-	var _login = __webpack_require__(390);
+	var _login = __webpack_require__(389);
 
 	var _axios = __webpack_require__(353);
 

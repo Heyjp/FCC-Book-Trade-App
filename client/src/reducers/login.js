@@ -29,6 +29,10 @@ const loginReducer = (state = {
       return Object.assign({}, state, {
         userLibrary: action.userLibrary
       });
+    case "SET_REQUEST_MODAL":
+    return Object.assign({}, state, {
+      requestModal: action.requestModal
+    });
     default:
       return state;
   }

@@ -207,9 +207,25 @@ router.post('/api/request-book', function (req, res) {
 });
 
 router.post('/api/accept-trade', function(req, res) {
-
+  console.log("accept trade", req.body);
   let data = req.body;
   data.cancel = false;
+  let user = req.query.user;
+
+    Trade.handleTradeRequest(data, user, function (err, success) {
+      if (err) {
+      return   console.log(err);
+      }
+      console.log(success, "this is success");
+      return  res.status(200).send("accepted trade");
+    });
+
+});
+
+router.post('/api/cancel-trade', function(req, res) {
+  console.log("cancel-trade", req.body)
+  let data = req.body;
+  data.cancel = true;
   let user = req.query.user;
 
   Trade.handleTradeRequest(data, user, function (err, success) {
@@ -219,7 +235,6 @@ router.post('/api/accept-trade', function(req, res) {
     console.log(success, "this is success");
     return  res.status(200).send("accepted trade");
   });
-
 });
 
 router.post('/api/login', function (req, res, next) {

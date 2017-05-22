@@ -38,7 +38,7 @@ export const RequestTab = (props) => (
           <BooksList
             books={props.books.inc}
             key={1}
-            handleClick={props.acceptTrade}
+            handleClick={props.handleClick}
           />
          </div>
        }
@@ -47,7 +47,8 @@ export const RequestTab = (props) => (
                                           <BooksList
                                             books={props.books.out}
                                             key={2}
-                                            handleClick={props.cancelReq}/>
+                                            handleClick={props.handleClick}
+                                            />
                                         </div>
         }
     </div>

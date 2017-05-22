@@ -8,8 +8,7 @@ const Book = (props) => (
 )
 
 const BooksList = (props) => {
-  console.log(props, "props on bookslist")
-  if (props.handleClick) {
+  if (props.handleClick && !props.cancelClick) {
     return (
       <div className="book-container">
         {props.books.map( (e, i) => (

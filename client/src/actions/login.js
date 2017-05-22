@@ -5,6 +5,7 @@ const SET_LOGIN_SUCCESS = 'SET_LOGIN_SUCCESS';
 const SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
 const SET_USER = 'SET_USER';
 const SET_USER_LIBRARY = 'SET_USER_LIBRARY';
+const SET_REQUEST_MODAL = "SET_REQUEST_MODAL";
 
 export function setUser(user) {
   return {
@@ -39,4 +40,12 @@ export function setLoginError(loginError) {
     type: SET_LOGIN_ERROR,
     loginError: loginError
   }
+}
+
+export function setReqModal(requestModal) {
+  console.log(requestModal, "this is action setReqModal")
+  return {
+    type: SET_REQUEST_MODAL,
+    requestModal
+  };
 }
