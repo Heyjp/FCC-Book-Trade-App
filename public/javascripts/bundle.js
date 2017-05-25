@@ -24925,6 +24925,10 @@
 
 	var _Profile2 = _interopRequireDefault(_Profile);
 
+	var _About = __webpack_require__(397);
+
+	var _About2 = _interopRequireDefault(_About);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Container = function (_React$Component) {
@@ -24956,7 +24960,7 @@
 	          _react2.default.createElement(_Nav2.default, null),
 	          _react2.default.createElement('hr', null),
 	          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/about', component: About }),
+	          _react2.default.createElement(_reactRouterDom.Route, { path: '/about', component: _About2.default }),
 	          _react2.default.createElement(_reactRouterDom.Route, { path: '/topics', component: Topics }),
 	          _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default }),
 	          _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _Auth2.default }),
@@ -24978,18 +24982,6 @@
 	  }]);
 	  return Container;
 	}(_react2.default.Component);
-
-	var About = function About() {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'p',
-	      null,
-	      'About'
-	    )
-	  );
-	};
 
 	var Topics = function Topics() {
 	  return _react2.default.createElement(
@@ -34376,6 +34368,65 @@
 	};
 
 	exports.default = Details;
+
+/***/ }),
+/* 397 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var AboutContainer = function AboutContainer() {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'h1',
+	      null,
+	      'Manage a book trading club'
+	    ),
+	    _react2.default.createElement(
+	      'h4',
+	      null,
+	      'List of User Stories'
+	    ),
+	    _react2.default.createElement(
+	      'ul',
+	      null,
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        'I can view all books posted by every user.'
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        'I can add a new book.'
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        'I can update my settings to store my full name, city, and state.'
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        'I can propose a trade and wait for the other user to accept the trade.'
+	      )
+	    )
+	  );
+	};
+
+	exports.default = AboutContainer;
 
 /***/ })
 /******/ ]);

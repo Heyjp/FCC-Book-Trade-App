@@ -12,161 +12,8 @@ var jwt = require ('jsonwebtoken')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-/*
-  if (req.user) {
-    var user = req.user.username;
-    Trade.booksAvailable(user, function (err, info) {
-      if (err) {
-        console.log(err);
-      }
-      res.render("child", {data: info});
-    });
-  } else {
-    Trade.booksAvailable(null, function (err, info) {
-      if (err) {
-        console.log(err);
-      }
-        res.render('child', { title: 'Express', data: info });
-    });
-  }
-*/
-
   res.render('index')
 });
-/*
-router.get('/login', function (req, res) {
-  res.render('login');
-})
-
-router.get('/library', function(req, res, next) {
-    if (req.user) {
-      var user = req.user.username;
-
-      Trade.showLibrary(user, function (err, doc) {
-        var show_library = doc;
-        if (err) {
-          console.error(err);
-        }
-          Trade.findIncTrades(user, function (err, trades) {
-            var incTrades = trades;
-            if (err) {
-              console.error(err);
-            }
-              Trade.findOutTrades(user, function (err, requests) {
-                var outTrades = requests;
-                if (err) {
-                  console.error(err);
-                }
-                  res.render('library', { title: 'Express', books: show_library , inc: outTrades, out: incTrades });
-              });
-          });
-      });
-    } else {
-      res.render('library', { title: 'Express'});
-    }
-  });
-
-router.get('/trade', function (req, res) {
-  res.render('trade');
-})
-
-
-router.post('/addbook', function (req, res) {
-
-  var data = req.body;
-  var user = req.user.username;
-
-  Trade.addBook(user, data, function (err, info) {
-    if (err) {
-    }
-    res.status(200).send("successRedirect");
-  });
-
-});
-
-
-
-router.post('/login', passport.authenticate('local-login', { successRedirect: '/library',
-                                                    failureRedirect: '/login' }));
-
-router.post('/register', passport.authenticate('local-signup', { successRedirect: '/library',
-                                                                failureRedirect: '/login' }));
-
-
-router.post('/search', function (req, res) {
-  var data = req.body;
-  console.log(data);
-  var url = "https://www.googleapis.com/books/v1/volumes?q="
-
-  if (data.author) {
-    url = url + data.title + "inauthor" + data.author
-  } else {
-    url = url + data.title
-  }
-
-  request(url, function (error, response, body) {
-    if (error) {
-      console.log(err);
-    } else if (!error && response.statusCode == 200) {
-    //  console.log(body)
-      var json = JSON.parse(body);
-      var list = createBookList(json);
-      res.send(list);
-    }
-  })
-
-});
-
-router.post('/requestbook', function (req, res) {
-  var data = req.body;
-  var user = req.user.username;
-
-  Trade.requestTrade(user, data, function (err, success) {
-    if (err) {
-      console.log(err);
-    }
-    res.send("successfully requested");
-  })
-});
-
-
-router.post('/api/accept-trade', function(req, res) {
-  var data = req.body;
-  var user = req.user.username;
-  data.cancel = false;
-  Trade.handleTradeRequest(data, user, function (err, success) {
-    if (err) {
-      console.log(err);
-    }
-    res.status(200).send("accepted trade");
-  });
-});
-
-router.post('/cancel-trade', function(req, res) {
-  var data = req.body;
-  var user = req.user.username;
-  data.cancel = true;
-
-  Trade.handleTradeRequest(data, user, function (err, success) {
-    if (err) {
-      console.log(err);
-    }
-    res.status(200).send("cancelled trade");
-  });
-});
-
-router.post('/cancel-request', function(req, res) {
-  var data = req.body;
-  var user = req.user.username;
-
-  Trade.cancelBookRequest(user, data, function (err, success){
-      if (err) {
-        console.log(err);
-      }
-      res.status(200).send("cancelled request")
-  })
-});
-*/
 
 // get a collection of all the books in the database
 router.get('/api/books', function (req, res) {
@@ -186,13 +33,17 @@ router.get('/api/show-library', function (req, res) {
     if (err) {
       console.log(err, "there is an");
     }
-    console.log("user")
     res.status(200).send(info);
   });
 });
 
 
 router.post('/api/request-book', function (req, res) {
+
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  console.log(token, "this is verified token")
+
   let data = req.body;
   Trade.requestTrade(data, function (err, success) {
     if (err) {
@@ -211,7 +62,10 @@ router.post('/api/accept-trade', function(req, res) {
   console.log("accept trade", req.body);
   let data = req.body;
   data.cancel = false;
-  let user = req.query.user;
+
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  console.log(token, "this is verified token")
 
     Trade.handleTradeRequest(data, user, function (err, success) {
       if (err) {
@@ -227,7 +81,10 @@ router.post('/api/cancel-trade', function(req, res) {
   console.log("cancel-trade", req.body)
   let data = req.body;
   data.cancel = true;
-  let user = req.query.user;
+
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  console.log(token, "this is verified token")
 
   Trade.handleTradeRequest(data, user, function (err, success) {
     if (err) {
@@ -238,6 +95,8 @@ router.post('/api/cancel-trade', function(req, res) {
   });
 });
 
+
+// LOGIN ROUTES
 router.post('/api/login', function (req, res, next) {
   console.log("login route post", req.body);
 
@@ -273,14 +132,19 @@ router.post('/api/signup', function (req, res, next) {
     }
     req.session.user = user.username;
     let sig = jwt.sign({id: user.username}, process.env.JWT_KEY);
+
     return res.status(200)
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
     .send(user.username);
   })(req, res, next);
 });
 
+
+
 router.get('/api/get-trades', function (req, res) {
-    let user = req.query.user
+    let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+    let user = token.id;
+    console.log(token, "this is verified token")
 
     Trade.findIncTrades(user, function (err, trades) {
       var incTrades = trades;
@@ -299,6 +163,10 @@ router.get('/api/get-trades', function (req, res) {
 });
 
 router.post('/api/book-search', function (req, res) {
+
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  console.log(token, "this is verified token")
 
   const title = req.body.title;
   const author = req.body.author;
@@ -335,6 +203,10 @@ router.post('/api/book-search', function (req, res) {
 
 router.post('/api/add-book', function (req, res) {
 
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  console.log(token, "this is verified token")
+
   // Remove user from body object and take from JSON web Token
   let data = req.body;
   console.log(data, "this is req.body on add-book server")
@@ -349,7 +221,10 @@ router.post('/api/add-book', function (req, res) {
 });
 
 router.get('/api/get-profile', function (req, res) {
-  let user = req.query.username;
+
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  console.log(token, "this is verified token")
 
   UserList.getProfile(user, function (err, data) {
     if (err) {
@@ -362,8 +237,12 @@ router.get('/api/get-profile', function (req, res) {
 
 
 router.post('/api/update-profile', function (req, res) {
+
+    let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+    let user = token.id;
+    console.log(token, "this is verified token")
     let data = req.body;
-    UserList.updateUserProfile("sponjeh", data, function (err, profile) {
+    UserList.updateUserProfile(user, data, function (err, profile) {
       if (err) {
         return res.status(200).send("err");
       }
@@ -372,28 +251,8 @@ router.post('/api/update-profile', function (req, res) {
 });
 
 
-/*
-
-app.get('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user) { return res.redirect('/login'); }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      return res.redirect('/users/' + user.username);
-    });
-  })(req, res, next);
-});
-*/
-
 module.exports = router;
 
-/*
-
-obj.image = ele.volumeInfo.imageLinks.thumbnail;
-} else {
-
-*/
 
 function createBookList (itemList) {
   let booksArray = [];

@@ -8,6 +8,7 @@ import Nav from '../components/Nav.js';
 import DashBoard from '../containers/Dashboard.js'
 import AuthContainer from '../containers/Auth.js'
 import ProfileContainer from '../containers/Profile.js'
+import About from '../components/About.js'
 
 class Container extends React.Component {
 
@@ -43,13 +44,6 @@ class Container extends React.Component {
     )
   }
 }
-
-const About = () => (
-  <div>
-    <p>About</p>
-  </div>
-)
-
 
 const Topics = () => (
   <div>
