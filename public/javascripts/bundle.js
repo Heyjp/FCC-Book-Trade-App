@@ -24929,6 +24929,10 @@
 
 	var _About2 = _interopRequireDefault(_About);
 
+	var _Users = __webpack_require__(398);
+
+	var _Users2 = _interopRequireDefault(_Users);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Container = function (_React$Component) {
@@ -24966,6 +24970,7 @@
 	          _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _Auth2.default }),
 	          _react2.default.createElement(_reactRouterDom.Route, { path: '/signup', component: _Auth2.default }),
 	          _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
+	          _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', component: _Users2.default }),
 	          _react2.default.createElement('hr', null),
 	          _react2.default.createElement(
 	            'div',
@@ -33272,6 +33277,24 @@
 	          { to: '/profile' },
 	          'Profile'
 	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          _reactRouterDom.Link,
+	          { to: '/user/sponjeh' },
+	          'User1'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          _reactRouterDom.Link,
+	          { to: '/user/kip' },
+	          'User2'
+	        )
 	      )
 	    )
 	  );
@@ -34427,6 +34450,112 @@
 	};
 
 	exports.default = AboutContainer;
+
+/***/ }),
+/* 398 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(265);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(270);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(271);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(275);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(310);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _axios = __webpack_require__(354);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _reactRedux = __webpack_require__(182);
+
+	var _Book = __webpack_require__(384);
+
+	var _Book2 = _interopRequireDefault(_Book);
+
+	var _login = __webpack_require__(390);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var UserContainer = function (_React$Component) {
+	  (0, _inherits3.default)(UserContainer, _React$Component);
+
+	  function UserContainer(props) {
+	    (0, _classCallCheck3.default)(this, UserContainer);
+
+	    var _this = (0, _possibleConstructorReturn3.default)(this, (UserContainer.__proto__ || (0, _getPrototypeOf2.default)(UserContainer)).call(this, props));
+
+	    _this.setCollection = _this.setCollection.bind(_this);
+
+	    return _this;
+	  }
+
+	  (0, _createClass3.default)(UserContainer, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.setCollection();
+	    }
+	  }, {
+	    key: 'setCollection',
+	    value: function setCollection() {
+	      var self = this;
+	      var user = this.props.match.params.userId;
+	      _axios2.default.get('/api/show-library?user=' + user).then(function (res) {
+	        self.props.dispatch((0, _login.setUserLibrary)(res.data));
+	      }).catch(function (err) {
+	        console.log(err, "this is err");
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      console.log(this.props, "props");
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          this.props.match.params.userId
+	        ),
+	        _react2.default.createElement(_Book2.default, { books: this.props.userCollection })
+	      );
+	    }
+	  }]);
+	  return UserContainer;
+	}(_react2.default.Component);
+
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    userCollection: state.loginReducer.userLibrary
+	  };
+	};
+
+	var UserConnect = (0, _reactRedux.connect)(mapStateToProps)(UserContainer);
+
+	exports.default = UserConnect;
 
 /***/ })
 /******/ ]);

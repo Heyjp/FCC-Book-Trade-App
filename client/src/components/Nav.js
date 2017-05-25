@@ -11,6 +11,8 @@ const Nav = () => (
       <li><Link to="/signup">Signup</Link></li>
       <li><Link to="/dashboard">Dashboard</Link></li>
       <li><Link to="/profile">Profile</Link></li>
+      <li><Link to="/user/sponjeh">User1</Link></li>
+      <li><Link to="/user/kip">User2</Link></li>
     </ul>
   </div>
 )

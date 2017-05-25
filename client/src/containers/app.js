@@ -9,6 +9,7 @@ import DashBoard from '../containers/Dashboard.js'
 import AuthContainer from '../containers/Auth.js'
 import ProfileContainer from '../containers/Profile.js'
 import About from '../components/About.js'
+import User from '../containers/Users.js'
 
 class Container extends React.Component {
 
@@ -35,6 +36,7 @@ class Container extends React.Component {
           <Route  path='/login' component={AuthContainer} />
           <Route  path='/signup' component={AuthContainer} />
           <Route  path='/profile' component={ProfileContainer} />
+          <Route  path='/user/:userId' component={User} />
           <hr />
           <div>
             <p>Footer</p>
