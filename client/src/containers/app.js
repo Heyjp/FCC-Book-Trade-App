@@ -7,6 +7,7 @@ import Main from '../containers/Main.js';
 import Nav from '../components/Nav.js';
 import DashBoard from '../containers/Dashboard.js'
 import AuthContainer from '../containers/Auth.js'
+import ProfileContainer from '../containers/Profile.js'
 
 class Container extends React.Component {
 
@@ -32,7 +33,7 @@ class Container extends React.Component {
           <Route  path='/dashboard' component={DashBoard} />
           <Route  path='/login' component={AuthContainer} />
           <Route  path='/signup' component={AuthContainer} />
-
+          <Route  path='/profile' component={ProfileContainer} />
           <hr />
           <div>
             <p>Footer</p>

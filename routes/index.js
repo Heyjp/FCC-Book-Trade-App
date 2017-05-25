@@ -5,6 +5,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var request = require('request');
 
 var Trade = require('../config/trader.js');
+var UserList = require('../config/profile.js');
 var jwt = require ('jsonwebtoken')
 
 
@@ -346,6 +347,31 @@ router.post('/api/add-book', function (req, res) {
   });
 
 });
+
+router.get('/api/get-profile', function (req, res) {
+  let user = req.query.username;
+
+  UserList.getProfile(user, function (err, data) {
+    if (err) {
+      return console.error(err);
+    }
+    return res.status(200).send(data);
+  })
+})
+
+
+
+router.post('/api/update-profile', function (req, res) {
+    let data = req.body;
+    UserList.updateUserProfile("sponjeh", data, function (err, profile) {
+      if (err) {
+        return res.status(200).send("err");
+      }
+      return res.status(200).send(profile);
+    })
+});
+
+
 /*
 
 app.get('/login', function(req, res, next) {

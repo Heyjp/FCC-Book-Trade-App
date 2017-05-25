@@ -43,7 +43,6 @@ export function setLoginError(loginError) {
 }
 
 export function setReqModal(requestModal) {
-  console.log(requestModal, "this is action setReqModal")
   return {
     type: SET_REQUEST_MODAL,
     requestModal

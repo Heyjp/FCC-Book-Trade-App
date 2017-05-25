@@ -11,8 +11,9 @@ const Modal = (props) => {
       <img src={props.modal.image} width="100px" height="150px;" />
       <div>
         <ul>
-          <li><a onClick={props.handleClick.bind(this, "accept")} >Request Book</a></li>
-          <li><a onClick={props.handleClick.bind(this, "cancel")}>Cancel Request</a></li>
+        {props.reqBook && <li><a onClick={props.reqBook.bind(this, props.modal)}>Request Book</a></li>}
+        {props.handleClick && <li><a onClick={props.handleClick.bind(this, "accept")}>Request Book</a></li>}
+        {props.handleClick && <li><a onClick={props.handleClick.bind(this, "cancel")}>Cancel Request</a></li>}
         </ul>
       </div>
     </div>

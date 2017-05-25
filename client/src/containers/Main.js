@@ -39,7 +39,6 @@ class Main extends React.Component {
     let self = this;
     axios.get('/api/books')
       .then(function (res) {
-        console.log(res.data, "info on get books")
         self.props.dispatch(setLibrary(res.data))
       }, function (err) {
         console.log(err, "this is err on get book")
@@ -75,7 +74,6 @@ class Main extends React.Component {
   }
 
   render () {
-    console.log(this.state.books, "books on main container")
     return (
       <div className="main-container">
         <div>

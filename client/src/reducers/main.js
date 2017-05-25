@@ -1,7 +1,6 @@
 const bookApp = (state = {books: []}, action) => {
   switch (action.type) {
     case "SET_LIBRARY":
-      console.log("setting library")
       return {
         ...state,
         books: action.collection

@@ -79,7 +79,6 @@ class RequestContainer extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  console.log(state, "this is state on requestContainer")
   return {
     user: state.loginReducer.user,
     modal: state.loginReducer.requestModal
