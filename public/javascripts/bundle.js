@@ -24951,35 +24951,18 @@
 	        null,
 	        _react2.default.createElement(
 	          'div',
-	          null,
+	          { className: 'app-body' },
+	          _react2.default.createElement(_Nav2.default, { user: this.props.user }),
 	          _react2.default.createElement(
 	            'div',
-	            null,
-	            _react2.default.createElement(
-	              'h1',
-	              null,
-	              'Header'
-	            )
-	          ),
-	          _react2.default.createElement(_Nav2.default, null),
-	          _react2.default.createElement('hr', null),
-	          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/about', component: _About2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/topics', component: Topics }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _Auth2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/signup', component: _Auth2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', component: _Users2.default }),
-	          _react2.default.createElement('hr', null),
-	          _react2.default.createElement(
-	            'div',
-	            null,
-	            _react2.default.createElement(
-	              'p',
-	              null,
-	              'Footer'
-	            )
+	            { className: 'app-wrapper' },
+	            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/about', component: _About2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _Auth2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/signup', component: _Auth2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', component: _Users2.default })
 	          )
 	        )
 	      );
@@ -24988,21 +24971,11 @@
 	  return Container;
 	}(_react2.default.Component);
 
-	var Topics = function Topics() {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'p',
-	      null,
-	      'Topics'
-	    )
-	  );
-	};
-
 	var mapStateToProps = function mapStateToProps(state) {
+	  console.log(state, "this is state on App container");
 	  return {
-	    books: state.collection
+	    books: state.collection,
+	    user: state.loginReducer.user
 	  };
 	};
 
@@ -32966,6 +32939,7 @@
 	    value: function getBooks() {
 	      var self = this;
 	      _axios2.default.get('/api/books').then(function (res) {
+	        console.log(res, "this is res on main get books");
 	        self.props.dispatch((0, _index.setLibrary)(res.data));
 	      }, function (err) {
 	        console.log(err, "this is err on get book");
@@ -33005,16 +32979,7 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'main-container' },
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement(
-	            'p',
-	            null,
-	            'Main'
-	          )
-	        ),
+	        { className: 'main-container', id: 'style-9' },
 	        _react2.default.createElement(_Book2.default, { books: this.state.books, handleClick: this.handleClick }),
 	        this.state.isOpen ? _react2.default.createElement(_Modal2.default, { modal: this.props.modal, reqBook: this.requestBook, closeModal: this.toggleModal }) : ""
 	      );
@@ -33208,16 +33173,16 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Nav = function Nav() {
+	var Nav = function Nav(props) {
 	  return _react2.default.createElement(
 	    'div',
-	    null,
+	    { className: 'navigation' },
 	    _react2.default.createElement(
 	      'ul',
-	      null,
+	      { className: 'nav-bar' },
 	      _react2.default.createElement(
 	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
 	          { to: '/' },
@@ -33226,74 +33191,56 @@
 	      ),
 	      _react2.default.createElement(
 	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
 	          { to: '/about' },
 	          'About'
 	        )
 	      ),
-	      _react2.default.createElement(
+	      !props.user && _react2.default.createElement(
 	        'li',
-	        null,
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/topics' },
-	          'Topics'
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
 	          { to: '/login' },
 	          'Login'
 	        )
 	      ),
-	      _react2.default.createElement(
+	      !props.user && _react2.default.createElement(
 	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
 	          { to: '/signup' },
 	          'Signup'
 	        )
 	      ),
-	      _react2.default.createElement(
+	      props.user && _react2.default.createElement(
 	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
 	          { to: '/dashboard' },
 	          'Dashboard'
 	        )
 	      ),
-	      _react2.default.createElement(
+	      props.user && _react2.default.createElement(
 	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
 	          { to: '/profile' },
 	          'Profile'
 	        )
 	      ),
-	      _react2.default.createElement(
+	      props.user && _react2.default.createElement(
 	        'li',
-	        null,
+	        { className: 'nav-item' },
 	        _react2.default.createElement(
 	          _reactRouterDom.Link,
-	          { to: '/user/sponjeh' },
-	          'User1'
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        null,
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/user/kip' },
-	          'User2'
+	          { to: '/logout' },
+	          'Logout'
 	        )
 	      )
 	    )
@@ -33301,6 +33248,11 @@
 	};
 
 	exports.default = Nav;
+	/*
+	Link Example
+	<li className="nav-item"><Link to="/user/sponjeh">User1</Link></li>
+	<li className="nav-item"><Link to="/user/kip">User2</Link></li>
+	*/
 
 /***/ }),
 /* 388 */
@@ -33335,6 +33287,8 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouterDom = __webpack_require__(318);
 
 	var _reactRedux = __webpack_require__(182);
 
@@ -33489,6 +33443,11 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+
+	      if (!this.state.user) {
+	        return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/' });
+	      }
+
 	      var activeComponent = void 0;
 
 	      if (!this.state.active) {
@@ -34013,6 +33972,9 @@
 	    key: 'render',
 	    value: function render() {
 
+	      var route = void 0;
+
+	      this.state.route === "/login" ? route = "Login" : route = "Sign Up";
 	      // If user is logged in redirect from page
 	      if (this.props.user !== false) {
 	        return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/' });
@@ -34022,6 +33984,7 @@
 	        'div',
 	        null,
 	        _react2.default.createElement(_Form2.default, {
+	          route: route,
 	          pass: this.handlePass,
 	          user: this.handleUser,
 	          submit: this.handleSubmit,
@@ -34062,13 +34025,14 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Form = function Form(props) {
+	    console.log(props, "moose");
 	    return _react2.default.createElement(
 	        "div",
 	        null,
 	        _react2.default.createElement(
 	            "h2",
 	            null,
-	            "Login"
+	            props.route
 	        ),
 	        _react2.default.createElement(
 	            "form",
@@ -34509,17 +34473,20 @@
 
 	    _this.setCollection = _this.setCollection.bind(_this);
 
+	    _this.setCollection();
 	    return _this;
 	  }
 
 	  (0, _createClass3.default)(UserContainer, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      // Force the component to rerender if changing URL
 	      this.setCollection();
 	    }
 	  }, {
 	    key: 'setCollection',
 	    value: function setCollection() {
+	      console.log("setting collection");
 	      var self = this;
 	      var user = this.props.match.params.userId;
 	      _axios2.default.get('/api/show-library?user=' + user).then(function (res) {

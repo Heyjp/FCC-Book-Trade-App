@@ -39,6 +39,7 @@ class Main extends React.Component {
     let self = this;
     axios.get('/api/books')
       .then(function (res) {
+        console.log(res, "this is res on main get books")
         self.props.dispatch(setLibrary(res.data))
       }, function (err) {
         console.log(err, "this is err on get book")
@@ -75,10 +76,7 @@ class Main extends React.Component {
 
   render () {
     return (
-      <div className="main-container">
-        <div>
-          <p>Main</p>
-        </div>
+      <div className="main-container" id="style-9">
         <BooksList books={this.state.books} handleClick={this.handleClick} />
         {
           this.state.isOpen ? <Modal modal={this.props.modal} reqBook={this.requestBook} closeModal={this.toggleModal}/> : ""

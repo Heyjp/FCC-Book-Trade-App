@@ -9,17 +9,16 @@ var UserList = require('../config/profile.js');
 var jwt = require ('jsonwebtoken')
 
 
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index')
+  return res.render('index')
 });
 
 // get a collection of all the books in the database
 router.get('/api/books', function (req, res) {
     Trade.booksAvailable(null, function (err, info) {
       if (err) {
-        console.log(err, "there is an");
+        console.log(err, "there is an err");
       }
       console.log("no user")
       res.status(200).send(info);
@@ -33,6 +32,7 @@ router.get('/api/show-library', function (req, res) {
     if (err) {
       console.log(err, "there is an");
     }
+    console.log(info, "this is info");
     res.status(200).send(info);
   });
 });
@@ -232,9 +232,7 @@ router.get('/api/get-profile', function (req, res) {
     }
     return res.status(200).send(data);
   })
-})
-
-
+});
 
 router.post('/api/update-profile', function (req, res) {
 
@@ -250,6 +248,9 @@ router.post('/api/update-profile', function (req, res) {
     })
 });
 
+router.get('/*', function(req, res) {
+  return res.redirect('/');
+});
 
 module.exports = router;
 

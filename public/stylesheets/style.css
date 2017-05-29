@@ -1,14 +1,14 @@
 
 body {
-  height: 100vh;
-  width: 100%;
   background-color: #ecf0f1;
-
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
 }
 
 .main-container {
-  height: 60vh;
-  width: 92%;
+  height: 90vh;
+  width: 100%;
   background-color: #27ae60;
   padding: 20px;
   border-radius: 5px;
@@ -51,4 +51,63 @@ body {
   color: black;
   border-radius: 10px;
   z-index: 2;
+}
+
+.navigation {
+  background-color: #34495e;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-bar {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  height: 100%;
+  margin: 0px;
+}
+
+.nav-item {
+  display: inline-block;
+  padding: 10px 5px;
+  background-color: #d35400;
+  height: 100%;
+  border: 0.5px solid #bdc3c7;
+}
+
+.app-body {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+
+#style-9::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+#style-9::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+#style-9::-webkit-scrollbar-thumb
+{
+	background-color: #F90;
+	background-image: -webkit-linear-gradient(90deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+}
+
+
+.app-wrapper {
+  padding: 10px 50px;
 }

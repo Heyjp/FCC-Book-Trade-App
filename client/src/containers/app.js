@@ -20,26 +20,17 @@ class Container extends React.Component {
   render () {
     return (
       <Router>
-        <div>
-          <div>
-            <h1>Header</h1>
-          </div>
+        <div className="app-body">
+          <Nav user={this.props.user}/>
 
-          <Nav />
-          <hr />
-
-
-          <Route exact path='/' component={Main} />
-          <Route  path='/about' component={About} />
-          <Route  path='/topics' component={Topics} />
-          <Route  path='/dashboard' component={DashBoard} />
-          <Route  path='/login' component={AuthContainer} />
-          <Route  path='/signup' component={AuthContainer} />
-          <Route  path='/profile' component={ProfileContainer} />
-          <Route  path='/user/:userId' component={User} />
-          <hr />
-          <div>
-            <p>Footer</p>
+          <div className="app-wrapper">
+            <Route exact path='/' component={Main} />
+            <Route  path='/about' component={About} />
+            <Route  path='/login' component={AuthContainer} />
+            <Route  path='/signup' component={AuthContainer} />
+            <Route  path='/profile' component={ProfileContainer} />
+            <Route  path='/dashboard' component={DashBoard} />
+            <Route  path='/user/:userId' component={User} />
           </div>
         </div>
       </Router>
@@ -47,15 +38,11 @@ class Container extends React.Component {
   }
 }
 
-const Topics = () => (
-  <div>
-    <p>Topics</p>
-  </div>
-)
-
 const mapStateToProps = (state) => {
+  console.log(state, "this is state on App container")
   return {
-    books: state.collection
+    books: state.collection,
+    user: state.loginReducer.user
   }
 }
 

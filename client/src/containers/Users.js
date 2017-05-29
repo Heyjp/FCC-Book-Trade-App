@@ -12,13 +12,16 @@ class UserContainer extends React.Component {
 
     this.setCollection = this.setCollection.bind(this);
 
+    this.setCollection();
   }
 
-  componentWillMount () {
+  componentWillReceiveProps(nextProps) {
+    // Force the component to rerender if changing URL
     this.setCollection();
   }
 
   setCollection () {
+    console.log("setting collection");
     let self = this;
     let user = this.props.match.params.userId;
     axios.get(`/api/show-library?user=${user}`)

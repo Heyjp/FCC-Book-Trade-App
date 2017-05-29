@@ -1,4 +1,5 @@
 import React from 'react';
+import {Redirect} from 'react-router-dom';
 import { connect } from 'react-redux'
 import axios from 'axios'
 
@@ -126,6 +127,13 @@ class DashBoard extends React.Component {
   }
 
   render() {
+
+    if (!this.state.user) {
+      return (
+        <Redirect to="/" />
+      )
+    }
+
     let activeComponent;
 
     if (!this.state.active) {

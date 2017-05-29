@@ -70,6 +70,9 @@ class AuthContainer extends React.Component {
 
   render () {
 
+    let route;
+
+    this.state.route === "/login" ? route = "Login" : route = "Sign Up";
     // If user is logged in redirect from page
     if (this.props.user !== false) {
       return (
@@ -80,6 +83,7 @@ class AuthContainer extends React.Component {
     return (
       <div>
         <Form
+        route={route}
         pass={this.handlePass}
         user={this.handleUser}
         submit={this.handleSubmit}
