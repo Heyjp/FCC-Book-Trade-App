@@ -1,8 +1,9 @@
 import React from 'react';
+import {Link} from 'react-router-dom'
 
 const Book = (props) => (
   <div className="book" onClick={props.handleClick}>
-    <h6>{props.book.title}</h6>
+    <h5>{props.book.title}</h5>
     <img src={props.book.image} width="150px" height="200px" />
   </div>
 )

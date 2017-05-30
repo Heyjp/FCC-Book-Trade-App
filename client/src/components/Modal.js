@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom'
 
 
 const Modal = (props) => {
@@ -9,6 +10,7 @@ const Modal = (props) => {
     <div className="inner-box">
       <h4>{props.modal.title}</h4>
       <img src={props.modal.image} width="100px" height="150px;" />
+      {props.modal.owner && <Link to={`/user/${props.modal.owner}`}>{props.modal.owner}</Link>}
       <div>
         <ul>
         {props.reqBook && <li><a onClick={props.reqBook.bind(this, props.modal)}>Request Book</a></li>}

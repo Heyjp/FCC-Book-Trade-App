@@ -29,6 +29,7 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps, "nextporps on main")
     this.setState({
       books: nextProps.books,
       modal: nextProps.modal

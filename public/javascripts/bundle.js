@@ -24940,10 +24940,27 @@
 
 	  function Container(props) {
 	    (0, _classCallCheck3.default)(this, Container);
-	    return (0, _possibleConstructorReturn3.default)(this, (Container.__proto__ || (0, _getPrototypeOf2.default)(Container)).call(this, props));
+
+	    var _this = (0, _possibleConstructorReturn3.default)(this, (Container.__proto__ || (0, _getPrototypeOf2.default)(Container)).call(this, props));
+
+	    _this.state = {
+	      active: false,
+	      tabs: ["/", "/about", "/login", "/signup", "/dashboard", "/profile", "/logout"],
+	      icons: ["001-home.png", '266-question.png', "183-switch.png", "116-user-plus.png", "033-books.png", "114-user.png", "183-switch.png"]
+	    };
+
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    return _this;
 	  }
 
 	  (0, _createClass3.default)(Container, [{
+	    key: 'handleClick',
+	    value: function handleClick(e) {
+	      this.setState({
+	        active: e
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -24952,7 +24969,13 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'app-body' },
-	          _react2.default.createElement(_Nav2.default, { user: this.props.user }),
+	          _react2.default.createElement(_Nav2.default, {
+	            user: this.props.user,
+	            handleClick: this.handleClick,
+	            active: this.state.active,
+	            tabs: this.state.tabs,
+	            icons: this.state.icons
+	          }),
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'app-wrapper' },
@@ -32929,6 +32952,7 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
+	      console.log(nextProps, "nextporps on main");
 	      this.setState({
 	        books: nextProps.books,
 	        modal: nextProps.modal
@@ -33004,7 +33028,7 @@
 /* 384 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -33014,34 +33038,36 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRouterDom = __webpack_require__(318);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Book = function Book(props) {
 	  return _react2.default.createElement(
-	    "div",
-	    { className: "book", onClick: props.handleClick },
+	    'div',
+	    { className: 'book', onClick: props.handleClick },
 	    _react2.default.createElement(
-	      "h6",
+	      'h5',
 	      null,
 	      props.book.title
 	    ),
-	    _react2.default.createElement("img", { src: props.book.image, width: "150px", height: "200px" })
+	    _react2.default.createElement('img', { src: props.book.image, width: '150px', height: '200px' })
 	  );
 	};
 
 	var BooksList = function BooksList(props) {
 	  if (props.handleClick && !props.cancelClick) {
 	    return _react2.default.createElement(
-	      "div",
-	      { className: "book-container" },
+	      'div',
+	      { className: 'book-container' },
 	      props.books.map(function (e, i) {
 	        return _react2.default.createElement(Book, { key: i, book: e, handleClick: props.handleClick.bind(undefined, e, i) });
 	      })
 	    );
 	  } else {
 	    return _react2.default.createElement(
-	      "div",
-	      { className: "book-container" },
+	      'div',
+	      { className: 'book-container' },
 	      props.books.map(function (e, i) {
 	        return _react2.default.createElement(Book, { key: i, book: e });
 	      })
@@ -33055,7 +33081,7 @@
 /* 385 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -33065,54 +33091,61 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRouterDom = __webpack_require__(318);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Modal = function Modal(props) {
 	  console.log(props, "this is props on Modal");
 	  var self = undefined;
 	  return _react2.default.createElement(
-	    "div",
-	    { className: "modal", onClick: props.closeModal.bind(undefined) },
+	    'div',
+	    { className: 'modal', onClick: props.closeModal.bind(undefined) },
 	    _react2.default.createElement(
-	      "div",
-	      { className: "inner-box" },
+	      'div',
+	      { className: 'inner-box' },
 	      _react2.default.createElement(
-	        "h4",
+	        'h4',
 	        null,
 	        props.modal.title
 	      ),
-	      _react2.default.createElement("img", { src: props.modal.image, width: "100px", height: "150px;" }),
+	      _react2.default.createElement('img', { src: props.modal.image, width: '100px', height: '150px;' }),
+	      props.modal.owner && _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/user/' + props.modal.owner },
+	        props.modal.owner
+	      ),
 	      _react2.default.createElement(
-	        "div",
+	        'div',
 	        null,
 	        _react2.default.createElement(
-	          "ul",
+	          'ul',
 	          null,
 	          props.reqBook && _react2.default.createElement(
-	            "li",
+	            'li',
 	            null,
 	            _react2.default.createElement(
-	              "a",
+	              'a',
 	              { onClick: props.reqBook.bind(undefined, props.modal) },
-	              "Request Book"
+	              'Request Book'
 	            )
 	          ),
 	          props.handleClick && _react2.default.createElement(
-	            "li",
+	            'li',
 	            null,
 	            _react2.default.createElement(
-	              "a",
+	              'a',
 	              { onClick: props.handleClick.bind(undefined, "accept") },
-	              "Request Book"
+	              'Request Book'
 	            )
 	          ),
 	          props.handleClick && _react2.default.createElement(
-	            "li",
+	            'li',
 	            null,
 	            _react2.default.createElement(
-	              "a",
+	              'a',
 	              { onClick: props.handleClick.bind(undefined, "cancel") },
-	              "Cancel Request"
+	              'Cancel Request'
 	            )
 	          )
 	        )
@@ -33180,69 +33213,25 @@
 	    _react2.default.createElement(
 	      'ul',
 	      { className: 'nav-bar' },
-	      _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/' },
-	          'Main'
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/about' },
-	          'About'
-	        )
-	      ),
-	      !props.user && _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/login' },
-	          'Login'
-	        )
-	      ),
-	      !props.user && _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/signup' },
-	          'Signup'
-	        )
-	      ),
-	      props.user && _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/dashboard' },
-	          'Dashboard'
-	        )
-	      ),
-	      props.user && _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/profile' },
-	          'Profile'
-	        )
-	      ),
-	      props.user && _react2.default.createElement(
-	        'li',
-	        { className: 'nav-item' },
-	        _react2.default.createElement(
-	          _reactRouterDom.Link,
-	          { to: '/logout' },
-	          'Logout'
-	        )
-	      )
+	      props.tabs.map(function (e, i) {
+	        var activeClass = e === props.active ? "active" : "";
+	        // Conditonally render out depending on user login status
+	        if (props.user === false && (e === "/profile" || e === "/dashboard" || e === "/logout")) {
+	          return;
+	        }
+	        if (props.user && (e === "/login" || e === "/signup")) {
+	          return;
+	        }
+	        return _react2.default.createElement(
+	          'li',
+	          { className: 'nav-item ' + activeClass, onClick: props.handleClick.bind(this, e) },
+	          _react2.default.createElement(
+	            _reactRouterDom.Link,
+	            { to: '' + e },
+	            _react2.default.createElement('img', { src: '/images/' + props.icons[i], width: '20px', height: '20px' })
+	          )
+	        );
+	      })
 	    )
 	  );
 	};
@@ -33252,6 +33241,18 @@
 	Link Example
 	<li className="nav-item"><Link to="/user/sponjeh">User1</Link></li>
 	<li className="nav-item"><Link to="/user/kip">User2</Link></li>
+	*/
+
+	/*
+
+	  <li className="nav-item" onClick={props.handleClick.bind(this, "home")}><Link to="/"><img src="/images/001-home.png" width="20px" height="20px"/></Link></li>
+	  <li className="nav-item" onClick={props.handleClick.bind(this, "about")}><Link to="/about"><img src="/images/266-question.png" width="20px" height="20px"/></Link></li>
+	  {!props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "login")}><Link to="/login"><img src="/images/116-user-plus.png" width="20px" height="20px"/></Link></li>}
+	  {!props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "signup")}><Link to="/signup" onClick={props.handleClick.bind(this, "home")}><img src="/images/183-switch.png" width="20px" height="20px"/></Link></li>}
+	  {props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "dashboard")}><Link to="/dashboard"><img src="/images/033-books.png" width="20px" height="20px"/></Link></li>}
+	  {props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "profile")}><Link to="/profile"><img src="/images/114-user.png" width="20px" height="20px"/></Link></li>}
+	  {props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "logout")}><Link to="/logout"><img src="/images/183-switch.png" width="20px" height="20px"/></Link></li>}
+
 	*/
 
 /***/ }),

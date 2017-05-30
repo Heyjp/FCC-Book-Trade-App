@@ -15,13 +15,33 @@ class Container extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      active: false,
+      tabs: ["/", "/about", "/login", "/signup", "/dashboard", "/profile", "/logout" ],
+      icons: ["001-home.png", '266-question.png', "183-switch.png", "116-user-plus.png", "033-books.png", "114-user.png", "183-switch.png"]
+    }
+
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick (e) {
+    this.setState({
+      active: e
+    })
   }
 
   render () {
     return (
       <Router>
         <div className="app-body">
-          <Nav user={this.props.user}/>
+          <Nav
+            user={this.props.user}
+            handleClick={this.handleClick}
+            active={this.state.active}
+            tabs={this.state.tabs}
+            icons={this.state.icons}
+           />
 
           <div className="app-wrapper">
             <Route exact path='/' component={Main} />
