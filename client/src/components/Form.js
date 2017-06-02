@@ -1,18 +1,17 @@
 import React from 'react';
 
 const Form = (props) => {
-  console.log(props, "moose")
   return (
-    <div>
+    <div className="form-container">
       <h2>{props.route}</h2>
         <form onSubmit={props.submit}>
-            <div>
-                <label>Username:</label>
+            <div className="form-group">
+                <label>Username</label>
                 <input type="text" name="username" value={props.username} onChange={props.user}/>
             </div>
-            <div>
-                <label>Password:</label>
-                <input type="password" name="password" value={props.password} onChange={props.pass}/>
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" name="password" value={props.password} onChange={props.pass}/>
             </div>
             <div>
                 <input type="submit" value="Log In"/>

@@ -7,6 +7,7 @@ import Modal from '../components/Modal.js'
 
 import {setLibrary, setModal} from '../actions/index.js'
 
+import NotificationSystem from 'react-notification-system';
 
 class Main extends React.Component {
   constructor (props) {
@@ -18,11 +19,16 @@ class Main extends React.Component {
       modal: false
     }
 
+
+    this._notificationSystem = this.refs.notificationSystem
+
     this.handleClick = this.handleClick.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.getBooks = this.getBooks.bind(this);
     this.requestBook = this.requestBook.bind(this);
+    this.reqNotification = this.reqNotification.bind(this);
   }
+
 
   componentWillMount () {
     this.getBooks();
@@ -34,13 +40,32 @@ class Main extends React.Component {
       books: nextProps.books,
       modal: nextProps.modal
     })
+
+    if (nextProps.location.state && nextProps.location.state.loggedIn && !this.state.loggedIn) {
+      this.setState({
+        loggedIn: true
+      })
+
+      return this.refs.notificationSystem.addNotification({
+         message: "Login Successful!",
+         level: 'success',
+         position: 'tc'
+       })
+    }
+  }
+
+  reqNotification () {
+    return this.refs.notificationSystem.addNotification({
+       message: "Book successfully requested",
+       level: 'success',
+       position: 'tc'
+     })
   }
 
   getBooks () {
     let self = this;
     axios.get('/api/books')
       .then(function (res) {
-        console.log(res, "this is res on main get books")
         self.props.dispatch(setLibrary(res.data))
       }, function (err) {
         console.log(err, "this is err on get book")
@@ -65,23 +90,27 @@ class Main extends React.Component {
 
   requestBook (object, e) {
     e.stopPropagation();
+    let self = this;
     let userData = object;
     userData.user = this.props.user;
     axios.post('/api/request-book', userData)
       .then(function (res) {
         console.log(res, "this is res on requestBook")
+        self.reqNotification();
       }, function (err) {
         console.log(err, "this is err on get book")
       })
   }
 
   render () {
+
     return (
       <div className="main-container" id="style-9">
         <BooksList books={this.state.books} handleClick={this.handleClick} />
         {
-          this.state.isOpen ? <Modal modal={this.props.modal} reqBook={this.requestBook} closeModal={this.toggleModal}/> : ""
+          this.state.isOpen ? <Modal modal={this.props.modal} user={this.props.user}reqBook={this.requestBook} closeModal={this.toggleModal}/> : ""
         }
+        <NotificationSystem ref="notificationSystem" />
       </div>
     )
   }

@@ -65,7 +65,7 @@ class RequestContainer extends React.Component {
           books={this.props.books}
           handleClick={this.handleClick}
         />
-          {isActive && <Modal
+          {isActive && <Modal              
                         modal={this.props.modal}
                         closeModal={this.toggleModal}
                         handleClick={this.handleReq}

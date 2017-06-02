@@ -59,7 +59,6 @@ class Container extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state, "this is state on App container")
   return {
     books: state.collection,
     user: state.loginReducer.user

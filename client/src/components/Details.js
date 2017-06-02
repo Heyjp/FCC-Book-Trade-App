@@ -1,7 +1,6 @@
 import React from 'react'
 
 const Details = (props) => {
-  console.log(props, "this is props on Details")
   return (
   <div>
     <div>

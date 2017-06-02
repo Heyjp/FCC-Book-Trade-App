@@ -207,17 +207,13 @@ router.post('/api/add-book', function (req, res) {
   let user = token.id;
   console.log(token, "this is verified token")
 
-  // Remove user from body object and take from JSON web Token
-  let data = req.body;
-  console.log(data, "this is req.body on add-book server")
-
-  Trade.addBook(data.user, data, function (err, info) {
+  Trade.addBook(user, req.body, function (err, info) {
     if (err) {
-      console.log(err);
+      return console.log(err);
     }
-    res.status(200).send("successRedirect");
+     return res.status(200).send("successRedirect");
   });
-
+  
 });
 
 router.get('/api/get-profile', function (req, res) {

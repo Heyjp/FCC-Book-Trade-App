@@ -30,7 +30,7 @@ class ProfileContainer extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    console.log(nextProps, "nextProps on Profile.js")
+  //  console.log(nextProps, "nextProps on Profile.js")
   }
 
   clearState () {

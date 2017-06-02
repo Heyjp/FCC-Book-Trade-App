@@ -76,7 +76,10 @@ class AuthContainer extends React.Component {
     // If user is logged in redirect from page
     if (this.props.user !== false) {
       return (
-        <Redirect to='/' />
+        <Redirect to={{
+          pathname: '/',
+          state: {loggedIn: 'I came from Auth'}
+        }} />
       )
     }
 
