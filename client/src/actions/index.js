@@ -18,3 +18,23 @@ export const setModal = (modal) => {
     modal
   }
 }
+
+export const setRequests = (requests) => {
+  return {
+    type: "SET_REQUESTS",
+    requests
+  }
+}
+
+export const cancelRequest = (book) => {
+  return {
+    type: "CANCEL_REQUEST",
+    book
+  }
+}
+
+export const userLogout = () => {
+  return {
+    type: 'USER_LOGOUT'
+  }
+}

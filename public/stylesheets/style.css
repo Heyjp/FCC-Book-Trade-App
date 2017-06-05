@@ -313,3 +313,12 @@ input[type="submit"] {
   background-color: #9A12B3;
   margin: 0px;
 }
+
+.loader-container {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

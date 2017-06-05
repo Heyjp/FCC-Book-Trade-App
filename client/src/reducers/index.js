@@ -4,10 +4,17 @@ import loginReducer from './login'
 import bookApp from './main'
 import userReducer from './user'
 
-const bookClub = combineReducers({
+const appReducer = combineReducers({
   loginReducer,
   bookApp,
   userReducer
 })
 
-export default bookClub;
+const rootReducer = (state, action ) => {
+  if (action.type === "USER_LOGOUT") {
+    state = undefined;
+  }
+  return appReducer(state, action);
+}
+
+export default rootReducer;

@@ -24811,13 +24811,20 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var bookClub = (0, _redux.combineReducers)({
+	var appReducer = (0, _redux.combineReducers)({
 	  loginReducer: _login2.default,
 	  bookApp: _main2.default,
 	  userReducer: _user2.default
 	});
 
-	exports.default = bookClub;
+	var rootReducer = function rootReducer(state, action) {
+	  if (action.type === "USER_LOGOUT") {
+	    state = undefined;
+	  }
+	  return appReducer(state, action);
+	};
+
+	exports.default = rootReducer;
 
 /***/ }),
 /* 226 */
@@ -25402,7 +25409,10 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var bookApp = function bookApp() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { books: [] };
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+	    books: [],
+	    requests: { inc: [], out: [] }
+	  };
 	  var action = arguments[1];
 
 	  switch (action.type) {
@@ -25413,6 +25423,20 @@
 	    case "SET_MODAL":
 	      return (0, _extends3.default)({}, state, {
 	        modal: action.modal
+	      });
+	    case "SET_REQUESTS":
+	      return (0, _extends3.default)({}, state, {
+	        requests: action.requests
+	      });
+	    case "CANCEL_REQUEST":
+	      var requests = state.requests.out.filter(function (e) {
+	        return e._id !== action.book._id;
+	      });
+	      return (0, _extends3.default)({}, state, {
+	        requests: {
+	          inc: state.requests.inc,
+	          out: requests
+	        }
 	      });
 	    default:
 	      return state;
@@ -25551,6 +25575,10 @@
 
 	var _Users2 = _interopRequireDefault(_Users);
 
+	var _Logout = __webpack_require__(412);
+
+	var _Logout2 = _interopRequireDefault(_Logout);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Container = function (_React$Component) {
@@ -25574,6 +25602,7 @@
 	  (0, _createClass3.default)(Container, [{
 	    key: 'handleClick',
 	    value: function handleClick(e) {
+
 	      this.setState({
 	        active: e
 	      });
@@ -25581,6 +25610,7 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+
 	      return _react2.default.createElement(
 	        _reactRouterDom.BrowserRouter,
 	        null,
@@ -25603,7 +25633,8 @@
 	            _react2.default.createElement(_reactRouterDom.Route, { path: '/signup', component: _Auth2.default }),
 	            _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
 	            _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default }),
-	            _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', component: _Users2.default })
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', component: _Users2.default }),
+	            _react2.default.createElement(_reactRouterDom.Route, { path: '/logout', component: _Logout2.default })
 	          )
 	        )
 	      );
@@ -33673,19 +33704,33 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
-	      console.log(nextProps, "nextporps on main");
+	      console.log(nextProps, "this is nextPorps on Main");
+
 	      this.setState({
 	        books: nextProps.books,
 	        modal: nextProps.modal
 	      });
 
+	      // Flag so alert does not repeat after login
 	      if (nextProps.location.state && nextProps.location.state.loggedIn && !this.state.loggedIn) {
 	        this.setState({
 	          loggedIn: true
 	        });
-
+	        // Alerts depending on login or signup
 	        return this.refs.notificationSystem.addNotification({
-	          message: "Login Successful!",
+	          message: nextProps.location.state.route + ' Successful',
+	          level: 'success',
+	          position: 'tc'
+	        });
+	      }
+
+	      if (nextProps.location.state && nextProps.location.state.logout && !this.state.loggedOut) {
+	        this.setState({
+	          loggedOut: true
+	        });
+	        // Alerts depending on login or signup
+	        return this.refs.notificationSystem.addNotification({
+	          message: 'Logout Successful',
 	          level: 'success',
 	          position: 'tc'
 	        });
@@ -33984,6 +34029,26 @@
 	  return {
 	    type: "SET_MODAL",
 	    modal: modal
+	  };
+	};
+
+	var setRequests = exports.setRequests = function setRequests(requests) {
+	  return {
+	    type: "SET_REQUESTS",
+	    requests: requests
+	  };
+	};
+
+	var cancelRequest = exports.cancelRequest = function cancelRequest(book) {
+	  return {
+	    type: "CANCEL_REQUEST",
+	    book: book
+	  };
+	};
+
+	var userLogout = exports.userLogout = function userLogout() {
+	  return {
+	    type: 'USER_LOGOUT'
 	  };
 	};
 
@@ -35804,7 +35869,7 @@
 	        }
 	        return _react2.default.createElement(
 	          'li',
-	          { className: 'nav-item ' + activeClass, onClick: props.handleClick.bind(this, e) },
+	          { className: 'nav-item ' + activeClass, key: i, onClick: props.handleClick.bind(this, e) },
 	          _react2.default.createElement(
 	            _reactRouterDom.Link,
 	            { to: '' + e },
@@ -35817,23 +35882,6 @@
 	};
 
 	exports.default = Nav;
-	/*
-	Link Example
-	<li className="nav-item"><Link to="/user/sponjeh">User1</Link></li>
-	<li className="nav-item"><Link to="/user/kip">User2</Link></li>
-	*/
-
-	/*
-
-	  <li className="nav-item" onClick={props.handleClick.bind(this, "home")}><Link to="/"><img src="/images/001-home.png" width="20px" height="20px"/></Link></li>
-	  <li className="nav-item" onClick={props.handleClick.bind(this, "about")}><Link to="/about"><img src="/images/266-question.png" width="20px" height="20px"/></Link></li>
-	  {!props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "login")}><Link to="/login"><img src="/images/116-user-plus.png" width="20px" height="20px"/></Link></li>}
-	  {!props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "signup")}><Link to="/signup" onClick={props.handleClick.bind(this, "home")}><img src="/images/183-switch.png" width="20px" height="20px"/></Link></li>}
-	  {props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "dashboard")}><Link to="/dashboard"><img src="/images/033-books.png" width="20px" height="20px"/></Link></li>}
-	  {props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "profile")}><Link to="/profile"><img src="/images/114-user.png" width="20px" height="20px"/></Link></li>}
-	  {props.user && <li className="nav-item" onClick={props.handleClick.bind(this, "logout")}><Link to="/logout"><img src="/images/183-switch.png" width="20px" height="20px"/></Link></li>}
-
-	*/
 
 /***/ }),
 /* 401 */
@@ -35877,10 +35925,6 @@
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _reactNotificationSystem = __webpack_require__(392);
-
-	var _reactNotificationSystem2 = _interopRequireDefault(_reactNotificationSystem);
-
 	var _Requests = __webpack_require__(402);
 
 	var _Requests2 = _interopRequireDefault(_Requests);
@@ -35899,9 +35943,16 @@
 
 	var _Modal2 = _interopRequireDefault(_Modal);
 
+	var _reactNotificationSystem = __webpack_require__(392);
+
+	var _reactNotificationSystem2 = _interopRequireDefault(_reactNotificationSystem);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// CONTAINERS
+	// COMPONENTS
+
+
+	// ACTIONS
 	var DashBoard = function (_React$Component) {
 	  (0, _inherits3.default)(DashBoard, _React$Component);
 
@@ -35917,7 +35968,7 @@
 	      author: '',
 	      userLibrary: [],
 	      requestedBook: [],
-	      requests: [1, 2],
+	      requests: [],
 	      user: props.user,
 	      isOpen: false
 	    };
@@ -35946,10 +35997,8 @@
 	    value: function addBookToCollection(object, e) {
 	      e.stopPropagation();
 	      var self = this;
-	      console.log(object, e, "addBookToCollection");
 
 	      _axios2.default.post('/api/add-book', self.props.modal).then(function (res) {
-	        console.log(res, "res data on add book axios");
 	        self.bookAddNotification();
 	        self.toggleModal();
 	        self.setUserLibrary();
@@ -35958,7 +36007,6 @@
 	  }, {
 	    key: 'bookAddNotification',
 	    value: function bookAddNotification() {
-	      console.log("book Add Notification running");
 	      return this.refs.notificationSystem.addNotification({
 	        message: "Book successfully requested",
 	        level: 'success',
@@ -35978,13 +36026,10 @@
 	  }, {
 	    key: 'getRequests',
 	    value: function getRequests() {
-	      console.log("getting requests");
 	      var self = this;
 	      _axios2.default.get('/api/get-trades?user=' + this.state.user).then(function (res) {
-	        console.log(res, "get-trades res");
-	        self.setState({
-	          requests: res.data
-	        });
+	        console.log("getting Requests on Dashboard", res.data);
+	        self.props.dispatch((0, _index.setRequests)(res.data));
 	      });
 	    }
 	  }, {
@@ -35992,7 +36037,6 @@
 	    value: function handleBooks(e, i) {
 	      var data = e;
 	      data.user = this.state.user;
-	      console.log(e, "this is handleBooks");
 	      this.props.dispatch((0, _index.setModal)(data));
 	      this.toggleModal();
 	    }
@@ -36075,7 +36119,7 @@
 	        activeComponent = _react2.default.createElement(
 	          'div',
 	          null,
-	          _react2.default.createElement(_Requests2.default, { books: this.state.requests, handleClick: this.handleBooks })
+	          _react2.default.createElement(_Requests2.default, { books: this.props.requests, handleClick: this.handleBooks })
 	        );
 	      } else if (this.state.active === "add") {
 	        activeComponent = _react2.default.createElement(
@@ -36120,19 +36164,15 @@
 	  return DashBoard;
 	}(_react2.default.Component);
 
-	// {this.state.active === "add" && <button onClick={this.addBookToCollection}>Add Book</button>}
-
-	// COMPONENTS
-
-
-	// ACTIONS
+	// CONTAINERS
 
 
 	var mapStateToProps = function mapStateToProps(state) {
-	  console.log(state, "this is tate on dashboard");
+	  console.log("mapState TO Props, dashboard, requests", state.bookApp.requests);
 	  return {
 	    books: state.collection,
 	    modal: state.bookApp.modal,
+	    requests: state.bookApp.requests,
 	    user: state.loginReducer.user,
 	    userLibrary: state.loginReducer.userLibrary
 	  };
@@ -36192,6 +36232,10 @@
 
 	var _Modal2 = _interopRequireDefault(_Modal);
 
+	var _reactNotificationSystem = __webpack_require__(392);
+
+	var _reactNotificationSystem2 = _interopRequireDefault(_reactNotificationSystem);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var RequestContainer = function (_React$Component) {
@@ -36205,6 +36249,7 @@
 	    _this.handleReq = _this.handleReq.bind(_this);
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.toggleModal = _this.toggleModal.bind(_this);
+	    _this.rejectRequests = _this.rejectRequests.bind(_this);
 
 	    _this.state = {
 	      isOpen: false
@@ -36212,7 +36257,7 @@
 	    return _this;
 	  }
 
-	  // Make 3 requests, accept and reject incoming requests
+	  // Make requests, accept and reject incoming requests
 	  // Cancel outgoing requests
 
 
@@ -36220,14 +36265,27 @@
 	    key: 'handleReq',
 	    value: function handleReq(option, e) {
 	      e.stopPropagation();
+	      var self = this;
 	      var data = this.props.modal;
 	      var user = this.props.user;
 
 	      option === "accept" ? _axios2.default.post('/api/accept-trade?user=' + user, data).then(function (res) {
-	        console.log(res, "this is res");
+	        self.refs.notificationSystem.addNotification({
+	          message: "Trade has been accepted",
+	          level: "success"
+	        });
 	      }) : _axios2.default.post('/api/cancel-trade?user=' + user, data).then(function (res) {
-	        console.log(res, "this is res");
+	        self.rejectRequests(data);
+	        self.refs.notificationSystem.addNotification({
+	          message: "Trade has been cancelled",
+	          level: "success"
+	        });
 	      });
+	    }
+	  }, {
+	    key: 'rejectRequests',
+	    value: function rejectRequests(book) {
+	      this.props.dispatch((0, _index.cancelRequest)(book));
 	    }
 	  }, {
 	    key: 'toggleModal',
@@ -36241,7 +36299,6 @@
 	  }, {
 	    key: 'handleClick',
 	    value: function handleClick(modal) {
-	      console.log("handleClick requestContainer", modal);
 	      this.props.dispatch((0, _login.setReqModal)(modal));
 	      this.toggleModal();
 	    }
@@ -36262,7 +36319,8 @@
 	          closeModal: this.toggleModal,
 	          handleClick: this.handleReq,
 	          owner: acceptOrCancel
-	        })
+	        }),
+	        _react2.default.createElement(_reactNotificationSystem2.default, { ref: 'notificationSystem' })
 	      );
 	    }
 	  }]);
@@ -36584,10 +36642,7 @@
 	    value: function promiseCall(username, password, route) {
 	      var self = this;
 	      _axios2.default.post('/api/' + route, { username: username, password: password }).then(function (res) {
-
-	        // self.props.dispatch(setLoginSuccess(true));
-	        // get the username from res.data,
-	        // self.props.dispatch(setLoginError(false));
+	        console.log(res, "this is res on promise call");
 	        self.props.dispatch((0, _login.setUser)(res.data));
 	      }).catch(function (err) {
 	        console.error(err, "err");
@@ -36604,7 +36659,7 @@
 	      if (this.props.user !== false) {
 	        return _react2.default.createElement(_reactRouterDom.Redirect, { to: {
 	            pathname: '/',
-	            state: { loggedIn: 'I came from Auth' }
+	            state: { loggedIn: 'I came from Auth', route: route }
 	          } });
 	      }
 
@@ -36741,6 +36796,10 @@
 
 	var _Details2 = _interopRequireDefault(_Details);
 
+	var _reactNotificationSystem = __webpack_require__(392);
+
+	var _reactNotificationSystem2 = _interopRequireDefault(_reactNotificationSystem);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ProfileContainer = function (_React$Component) {
@@ -36763,6 +36822,7 @@
 	    _this.handleChange = _this.handleChange.bind(_this);
 	    _this.clearState = _this.clearState.bind(_this);
 	    _this.getUserDetails = _this.getUserDetails.bind(_this);
+	    _this.updateNotification = _this.updateNotification.bind(_this);
 	    return _this;
 	  }
 
@@ -36830,13 +36890,20 @@
 	      var data = {};
 	      data[category] = this.state[category];
 
-	      console.log(data, "this is data on handlesubmit");
-
 	      // Send details to server to be handled
 	      _axios2.default.post('/api/update-profile', data).then(function (res) {
 	        console.log(res, "this is res on update-profile");
 	        self.props.dispatch((0, _user.setProfile)(res.data));
 	        self.clearState();
+	        self.updateNotification(category);
+	      });
+	    }
+	  }, {
+	    key: 'updateNotification',
+	    value: function updateNotification(category) {
+	      this.refs.notificationSystem.addNotification({
+	        message: category + ' successfully updated.',
+	        level: 'success'
 	      });
 	    }
 	  }, {
@@ -36873,7 +36940,8 @@
 	          handleClick: this.handleClick,
 	          handleChange: this.handleChange,
 	          handleSubmit: this.handleSubmit
-	        })
+	        }),
+	        _react2.default.createElement(_reactNotificationSystem2.default, { ref: 'notificationSystem' })
 	      );
 	    }
 	  }]);
@@ -37159,6 +37227,436 @@
 	var UserConnect = (0, _reactRedux.connect)(mapStateToProps)(UserContainer);
 
 	exports.default = UserConnect;
+
+/***/ }),
+/* 412 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(268);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(273);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(274);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(278);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(313);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouterDom = __webpack_require__(321);
+
+	var _axios = __webpack_require__(359);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _reactRedux = __webpack_require__(182);
+
+	var _index = __webpack_require__(391);
+
+	var _PulseLoader = __webpack_require__(413);
+
+	var _PulseLoader2 = _interopRequireDefault(_PulseLoader);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var LogoutContainer = function (_React$Component) {
+	  (0, _inherits3.default)(LogoutContainer, _React$Component);
+
+	  function LogoutContainer(props) {
+	    (0, _classCallCheck3.default)(this, LogoutContainer);
+
+	    var _this = (0, _possibleConstructorReturn3.default)(this, (LogoutContainer.__proto__ || (0, _getPrototypeOf2.default)(LogoutContainer)).call(this, props));
+
+	    _this.state = {
+	      logoutPending: false,
+	      logoutSuccess: false
+	    };
+
+	    _this.clearLogout = _this.clearLogout.bind(_this);
+	    _this.handleLogout = _this.handleLogout.bind(_this);
+
+	    return _this;
+	  }
+
+	  (0, _createClass3.default)(LogoutContainer, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var self = this;
+	      this.setState({
+	        logoutPending: true
+	      });
+
+	      setTimeout(function () {
+	        self.handleLogout();
+	      }, 1000);
+	    }
+	  }, {
+	    key: 'clearLogout',
+	    value: function clearLogout() {
+	      this.setState({
+	        logoutPending: false,
+	        logoutSuccess: false
+	      });
+	    }
+	  }, {
+	    key: 'handleLogout',
+	    value: function handleLogout() {
+	      var self = this;
+	      this.props.dispatch((0, _index.userLogout)());
+
+	      _axios2.default.post('/logout').then(function (res) {
+	        console.log(res, "this is logout");
+	        // Force the spinner to run for 3 seconds before redirecting
+	        setTimeout(function () {
+	          self.setState({
+	            logoutSuccess: true
+	          });
+	        }, 2000);
+	      }).catch(function (err) {
+	        console.log(err, "this is err on logout");
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+
+	      if (this.state.logoutPending && this.state.logoutSuccess) {
+	        return _react2.default.createElement(_reactRouterDom.Redirect, { to: {
+	            pathname: "/",
+	            state: { logout: true }
+	          } });
+	      }
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'loader-container' },
+	        _react2.default.createElement(_PulseLoader2.default, { color: '#26A65B', size: '16px', margin: '4px' }),
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Please wait, logging out'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	  return LogoutContainer;
+	}(_react2.default.Component);
+
+	var Logout = (0, _reactRedux.connect)()(LogoutContainer);
+
+	exports.default = Logout;
+
+/***/ }),
+/* 413 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var assign = __webpack_require__(414);
+	var insertKeyframesRule = __webpack_require__(417);
+
+	/**
+	 * @type {Object}
+	 */
+	var keyframes = {
+	    '0%': {
+	        transform: 'scale(1)',
+	        opacity: 1
+	    },
+	    '45%': {
+	        transform: 'scale(0.1)',
+	        opacity: 0.7
+	    },
+	    '80%': {
+	        transform: 'scale(1)',
+	        opacity: 1
+	    }
+	};
+
+	/**
+	 * @type {String}
+	 */
+	var animationName = insertKeyframesRule(keyframes);
+
+	var Loader = React.createClass({
+	    displayName: 'Loader',
+
+	    /**
+	     * @type {Object}
+	     */
+	    propTypes: {
+	        loading: React.PropTypes.bool,
+	        color: React.PropTypes.string,
+	        size: React.PropTypes.string,
+	        margin: React.PropTypes.string
+	    },
+
+	    /**
+	     * @return {Object}
+	     */
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            loading: true,
+	            color: '#ffffff',
+	            size: '15px',
+	            margin: '2px'
+	        };
+	    },
+
+	    /**
+	     * @return {Object}
+	     */
+	    getBallStyle: function getBallStyle() {
+	        return {
+	            backgroundColor: this.props.color,
+	            width: this.props.size,
+	            height: this.props.size,
+	            margin: this.props.margin,
+	            borderRadius: '100%',
+	            verticalAlign: this.props.verticalAlign
+	        };
+	    },
+
+	    /**
+	     * @param  {Number} i
+	     * @return {Object}
+	     */
+	    getAnimationStyle: function getAnimationStyle(i) {
+	        var animation = [animationName, '0.75s', i * 0.12 + 's', 'infinite', 'cubic-bezier(.2,.68,.18,1.08)'].join(' ');
+	        var animationFillMode = 'both';
+
+	        return {
+	            animation: animation,
+	            animationFillMode: animationFillMode
+	        };
+	    },
+
+	    /**
+	     * @param  {Number} i
+	     * @return {Object}
+	     */
+	    getStyle: function getStyle(i) {
+	        return assign(this.getBallStyle(i), this.getAnimationStyle(i), {
+	            display: 'inline-block'
+	        });
+	    },
+
+	    /**
+	     * @param  {Boolean} loading
+	     * @return {ReactComponent || null}
+	     */
+	    renderLoader: function renderLoader(loading) {
+	        if (loading) {
+	            return React.createElement(
+	                'div',
+	                { id: this.props.id, className: this.props.className },
+	                React.createElement('div', { style: this.getStyle(1) }),
+	                React.createElement('div', { style: this.getStyle(2) }),
+	                React.createElement('div', { style: this.getStyle(3) })
+	            );
+	        }
+
+	        return null;
+	    },
+
+	    render: function render() {
+	        return this.renderLoader(this.props.loading);
+	    }
+	});
+
+	module.exports = Loader;
+
+/***/ }),
+/* 414 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var getVendorPropertyName = __webpack_require__(415);
+
+	module.exports = function(target, sources) {
+	  var to = Object(target);
+	  var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+	  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+	    var nextSource = arguments[nextIndex];
+	    if (nextSource == null) {
+	      continue;
+	    }
+
+	    var from = Object(nextSource);
+
+	    for (var key in from) {
+	      if (hasOwnProperty.call(from, key)) {
+	        to[key] = from[key];
+	      }
+	    }
+	  }
+
+	  var prefixed = {};
+	  for (var key in to) {
+	    prefixed[getVendorPropertyName(key)] = to[key]
+	  }
+
+	  return prefixed
+	}
+
+
+/***/ }),
+/* 415 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var builtinStyle = __webpack_require__(416);
+	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
+	var domVendorPrefix;
+
+	// Helper function to get the proper vendor property name. (transition => WebkitTransition)
+	module.exports = function(prop, isSupportTest) {
+
+	  var vendorProp;
+	  if (prop in builtinStyle) return prop;
+
+	  var UpperProp = prop.charAt(0).toUpperCase() + prop.substr(1);
+
+	  if (domVendorPrefix) {
+
+	    vendorProp = domVendorPrefix + UpperProp;
+	    if (vendorProp in builtinStyle) {
+	      return vendorProp;
+	    }
+	  } else {
+
+	    for (var i = 0; i < prefixes.length; ++i) {
+	      vendorProp = prefixes[i] + UpperProp;
+	      if (vendorProp in builtinStyle) {
+	        domVendorPrefix = prefixes[i];
+	        return vendorProp;
+	      }
+	    }
+	  }
+
+	  // if support test, not fallback to origin prop name
+	  if (!isSupportTest) {
+	    return prop;
+	  }
+
+	}
+
+
+/***/ }),
+/* 416 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	module.exports = document.createElement('div').style;
+
+
+/***/ }),
+/* 417 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var insertRule = __webpack_require__(418);
+	var vendorPrefix = __webpack_require__(419)();
+	var index = 0;
+
+	module.exports = function(keyframes) {
+	  // random name
+	  var name = 'anim_' + (++index) + (+new Date);
+	  var css = "@" + vendorPrefix + "keyframes " + name + " {";
+
+	  for (var key in keyframes) {
+	    css += key + " {";
+
+	    for (var property in keyframes[key]) {
+	      var part = ":" + keyframes[key][property] + ";";
+	      // We do vendor prefix for every property
+	      css += vendorPrefix + property + part;
+	      css += property + part;
+	    }
+
+	    css += "}";
+	  }
+
+	  css += "}";
+
+	  insertRule(css);
+
+	  return name
+	}
+
+
+/***/ }),
+/* 418 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	var extraSheet;
+
+	module.exports = function(css) {
+
+	  if (!extraSheet) {
+	    // First time, create an extra stylesheet for adding rules
+	    extraSheet = document.createElement('style');
+	    document.getElementsByTagName('head')[0].appendChild(extraSheet);
+	    // Keep reference to actual StyleSheet object (`styleSheet` for IE < 9)
+	    extraSheet = extraSheet.sheet || extraSheet.styleSheet;
+	  }
+
+	  var index = (extraSheet.cssRules || extraSheet.rules).length;
+	  extraSheet.insertRule(css, index);
+
+	  return extraSheet;
+	}
+
+
+/***/ }),
+/* 419 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	var cssVendorPrefix;
+
+	module.exports = function() {
+
+	  if (cssVendorPrefix) return cssVendorPrefix;
+
+	  var styles = window.getComputedStyle(document.documentElement, '');
+	  var pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o']))[1];
+
+	  return cssVendorPrefix = '-' + pre + '-';
+	}
+
 
 /***/ })
 /******/ ]);

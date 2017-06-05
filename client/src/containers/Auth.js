@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom'
 
 import Form from '../components/Form.js';
-import {setLoginError, setLoginSuccess, setUser} from '../actions/login.js';
+import {setUser} from '../actions/login.js';
 import axios from 'axios';
 
 class AuthContainer extends React.Component {
@@ -57,10 +57,7 @@ class AuthContainer extends React.Component {
   promiseCall (username, password, route) {
     let self = this;
     axios.post(`/api/${route}`, {username, password}).then(function (res) {
-
-      // self.props.dispatch(setLoginSuccess(true));
-      // get the username from res.data,
-      // self.props.dispatch(setLoginError(false));
+      console.log(res, "this is res on promise call")
       self.props.dispatch(setUser(res.data))
     }).catch(function (err) {
       console.error(err, "err")
@@ -78,7 +75,7 @@ class AuthContainer extends React.Component {
       return (
         <Redirect to={{
           pathname: '/',
-          state: {loggedIn: 'I came from Auth'}
+          state: {loggedIn: 'I came from Auth', route}
         }} />
       )
     }

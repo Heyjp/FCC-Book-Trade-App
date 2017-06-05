@@ -6,6 +6,8 @@ import {setProfile} from '../actions/user.js'
 
 import Details from '../components/Details.js'
 
+import NotificationSystem from 'react-notification-system';
+
 class ProfileContainer extends React.Component {
 
   constructor(props) {
@@ -23,6 +25,7 @@ class ProfileContainer extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.clearState = this.clearState.bind(this);
     this.getUserDetails = this.getUserDetails.bind(this);
+    this.updateNotification = this.updateNotification.bind(this);
   }
   componentWillMount () {
     // API request to get initial profile info from server
@@ -81,15 +84,21 @@ class ProfileContainer extends React.Component {
     let data = {};
     data[category] = this.state[category]
 
-    console.log(data, "this is data on handlesubmit")
-
     // Send details to server to be handled
     axios.post('/api/update-profile', data)
       .then(function (res) {
         console.log(res, "this is res on update-profile")
         self.props.dispatch(setProfile(res.data));
         self.clearState();
+        self.updateNotification(category);
       })
+  }
+
+  updateNotification (category) {
+    this.refs.notificationSystem.addNotification({
+      message: `${category} successfully updated.`,
+      level: 'success'
+    })
   }
 
 
@@ -117,6 +126,7 @@ class ProfileContainer extends React.Component {
         handleChange={this.handleChange}
         handleSubmit={this.handleSubmit}
          />
+         <NotificationSystem ref="notificationSystem" />
       </div>
     )
   }

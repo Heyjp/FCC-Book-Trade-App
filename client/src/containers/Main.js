@@ -35,23 +35,37 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps, "nextporps on main")
+    console.log(nextProps, "this is nextPorps on Main");
+
     this.setState({
       books: nextProps.books,
       modal: nextProps.modal
     })
 
-    if (nextProps.location.state && nextProps.location.state.loggedIn && !this.state.loggedIn) {
-      this.setState({
-        loggedIn: true
+    // Flag so alert does not repeat after login
+      if (nextProps.location.state && nextProps.location.state.loggedIn && !this.state.loggedIn) {
+        this.setState({
+          loggedIn: true
       })
+      // Alerts depending on login or signup
+        return this.refs.notificationSystem.addNotification({
+           message: `${nextProps.location.state.route} Successful`,
+           level: 'success',
+           position: 'tc'
+        })
+      }
 
-      return this.refs.notificationSystem.addNotification({
-         message: "Login Successful!",
-         level: 'success',
-         position: 'tc'
-       })
-    }
+      if (nextProps.location.state && nextProps.location.state.logout && !this.state.loggedOut) {
+        this.setState({
+          loggedOut: true
+      })
+      // Alerts depending on login or signup
+        return this.refs.notificationSystem.addNotification({
+           message: `Logout Successful`,
+           level: 'success',
+           position: 'tc'
+        })
+      }
   }
 
   reqNotification () {

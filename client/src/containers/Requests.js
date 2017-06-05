@@ -3,10 +3,12 @@ import axios from 'axios'
 import {connect} from 'react-redux';
 
 import {setReqModal} from "../actions/login.js";
-import {setModal} from '../actions/index.js'
+import {setModal, cancelRequest} from '../actions/index.js'
 
 import {RequestTab} from '../components/Profile.js'
 import Modal from '../components/Modal.js'
+
+import NotificationSystem from 'react-notification-system';
 
 
 class RequestContainer extends React.Component {
@@ -17,28 +19,41 @@ class RequestContainer extends React.Component {
     this.handleReq = this.handleReq.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.rejectRequests = this.rejectRequests.bind(this);
 
     this.state = {
       isOpen: false
     }
   }
 
-  // Make 3 requests, accept and reject incoming requests
+  // Make requests, accept and reject incoming requests
   // Cancel outgoing requests
   handleReq (option, e) {
     e.stopPropagation();
+    let self = this;
     let data = this.props.modal
     let user = this.props.user
 
     option === "accept" ? axios.post(`/api/accept-trade?user=${user}`, data)
       .then(function (res) {
-        console.log(res, "this is res");
+        self.refs.notificationSystem.addNotification({
+          message: "Trade has been accepted",
+          level: "success"
+        })
       })
     :
       axios.post(`/api/cancel-trade?user=${user}`, data)
         .then(function (res) {
-          console.log(res, "this is res");
+          self.rejectRequests(data)
+          self.refs.notificationSystem.addNotification({
+            message: "Trade has been cancelled",
+            level: "success"
+          })
         })
+  }
+
+  rejectRequests (book) {
+    this.props.dispatch(cancelRequest(book))
   }
 
   toggleModal (e) {
@@ -51,7 +66,6 @@ class RequestContainer extends React.Component {
   }
 
   handleClick (modal) {
-    console.log("handleClick requestContainer", modal)
     this.props.dispatch(setReqModal(modal))
     this.toggleModal();
   }
@@ -65,12 +79,13 @@ class RequestContainer extends React.Component {
           books={this.props.books}
           handleClick={this.handleClick}
         />
-          {isActive && <Modal              
+          {isActive && <Modal
                         modal={this.props.modal}
                         closeModal={this.toggleModal}
                         handleClick={this.handleReq}
                         owner={acceptOrCancel}
                          /> }
+        <NotificationSystem ref="notificationSystem" />
       </div>
     )
   }

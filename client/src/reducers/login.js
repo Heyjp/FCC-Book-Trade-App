@@ -3,7 +3,7 @@ const loginReducer = (state = {
   isLoginPending: false,
   loginError: null,
   user: false,
-  userLibrary: []
+  userLibrary: [],
 }, action) => {
   switch (action.type) {
     case "SET_LOGIN_PENDING":

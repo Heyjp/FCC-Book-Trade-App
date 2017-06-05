@@ -3,19 +3,19 @@ import {Redirect} from 'react-router-dom';
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import NotificationSystem from 'react-notification-system';
-
 // CONTAINERS
 import RequestContainer from './Requests.js'
 
 // ACTIONS
 import {setUserLibrary} from '../actions/login.js'
-import {setLibrary, setModal} from '../actions/index.js'
+import {setLibrary, setModal, setRequests} from '../actions/index.js'
 
 // COMPONENTS
 import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
 import BooksList from '../components/Book.js';
 import Modal from '../components/Modal.js';
+
+import NotificationSystem from 'react-notification-system';
 
 
 class DashBoard extends React.Component {
@@ -28,7 +28,7 @@ class DashBoard extends React.Component {
       author: '',
       userLibrary: [],
       requestedBook: [],
-      requests: [1, 2],
+      requests: [],
       user: props.user,
       isOpen: false
     }
@@ -54,11 +54,9 @@ class DashBoard extends React.Component {
   addBookToCollection (object, e) {
     e.stopPropagation();
     let self = this;
-    console.log(object, e, "addBookToCollection")
 
     axios.post('/api/add-book', self.props.modal)
       .then(function (res) {
-        console.log(res, "res data on add book axios")
         self.bookAddNotification();
         self.toggleModal();
         self.setUserLibrary();
@@ -67,7 +65,6 @@ class DashBoard extends React.Component {
   }
 
   bookAddNotification () {
-    console.log("book Add Notification running");
     return this.refs.notificationSystem.addNotification({
        message: "Book successfully requested",
        level: 'success',
@@ -87,26 +84,20 @@ class DashBoard extends React.Component {
   }
 
   getRequests () {
-    console.log("getting requests")
     let self = this;
     axios.get(`/api/get-trades?user=${this.state.user}`)
       .then(function (res) {
-        console.log(res, "get-trades res");
-        self.setState({
-          requests: res.data
-        })
+        console.log("getting Requests on Dashboard", res.data);
+        self.props.dispatch(setRequests(res.data));
       })
   }
-
 
 
   handleBooks (e, i) {
     let data = e;
     data.user = this.state.user;
-    console.log(e, "this is handleBooks")
     this.props.dispatch(setModal(data))
     this.toggleModal();
-
   }
 
   handleClick (i) {
@@ -127,7 +118,6 @@ class DashBoard extends React.Component {
       author: e.target.value
     })
   }
-
 
   setUserLibrary () {
     let self = this;
@@ -182,7 +172,7 @@ class DashBoard extends React.Component {
     } else if (this.state.active === "request") {
       activeComponent = (
       <div>
-        <RequestContainer books={this.state.requests} handleClick={this.handleBooks}/>
+        <RequestContainer books={this.props.requests} handleClick={this.handleBooks}/>
       </div>
       )
     } else if (this.state.active === "add") {
@@ -223,13 +213,12 @@ class DashBoard extends React.Component {
 
 }
 
-// {this.state.active === "add" && <button onClick={this.addBookToCollection}>Add Book</button>}
-
 const mapStateToProps = (state) => {
-  console.log(state, "this is tate on dashboard");
+  console.log("mapState TO Props, dashboard, requests", state.bookApp.requests)
   return {
     books: state.collection,
     modal: state.bookApp.modal,
+    requests: state.bookApp.requests,
     user: state.loginReducer.user,
     userLibrary: state.loginReducer.userLibrary
   }

@@ -45,6 +45,8 @@ router.post('/api/request-book', function (req, res) {
   console.log(token, "this is verified token")
 
   let data = req.body;
+
+  console.log(data, user, "this is data and user on request-book")
   Trade.requestTrade(data, function (err, success) {
     if (err) {
     console.log(err);
@@ -213,7 +215,7 @@ router.post('/api/add-book', function (req, res) {
     }
      return res.status(200).send("successRedirect");
   });
-  
+
 });
 
 router.get('/api/get-profile', function (req, res) {
@@ -242,6 +244,18 @@ router.post('/api/update-profile', function (req, res) {
       }
       return res.status(200).send(profile);
     })
+});
+
+router.post('/logout', function (req, res) {
+  console.log("sending logout")
+  if (req.session.user) {
+    delete req.session.user
+    res.clearCookie('token');
+    req.logout();
+    res.status(200).send('logged out');
+  } else {
+    res.status(200).send('not loggedin')
+  }
 });
 
 router.get('/*', function(req, res) {

@@ -1,4 +1,7 @@
-const bookApp = (state = {books: []}, action) => {
+const bookApp = (state = {
+  books: [],
+  requests: {inc: [], out: []}
+}, action) => {
   switch (action.type) {
     case "SET_LIBRARY":
       return {
@@ -10,6 +13,22 @@ const bookApp = (state = {books: []}, action) => {
         ...state,
         modal: action.modal
       }
+    case "SET_REQUESTS":
+      return {
+        ...state,
+        requests: action.requests
+    }
+    case "CANCEL_REQUEST":
+    let requests = state.requests.out.filter(function (e) {
+        return e._id !== action.book._id
+      })
+    return {
+      ...state,
+      requests: {
+        inc: state.requests.inc,
+        out: requests
+      }
+    }
     default:
       return state
   }
