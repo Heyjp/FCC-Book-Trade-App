@@ -16,11 +16,11 @@ class Main extends React.Component {
     this.state = {
       books: [],
       isOpen: false,
-      modal: false
+      modal: false,
+      loggedIn: false,
+      loggedOut: null
     }
 
-
-    this._notificationSystem = this.refs.notificationSystem
 
     this.handleClick = this.handleClick.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
@@ -78,6 +78,7 @@ class Main extends React.Component {
 
   getBooks () {
     let self = this;
+    console.log(this.props.dispatch, "dispatch")
     axios.get('/api/books')
       .then(function (res) {
         self.props.dispatch(setLibrary(res.data))
