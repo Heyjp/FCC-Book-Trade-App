@@ -25676,14 +25676,13 @@
 	                    _reactRouterDom.Switch,
 	                    { location: location, key: location.key },
 	                    _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/login', key: 3, component: _Auth2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/about', key: 2, component: _About2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/signup', key: 4, component: _Auth2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', key: 5, component: _Profile2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', key: 6, component: _Dashboard2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', key: 6, component: _Users2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/logout', key: 7, component: _Logout2.default }),
-	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/animation', key: 7, component: _animationExample2.default })
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/login', component: _Auth2.default }),
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/about', component: _About2.default }),
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/signup', component: _Auth2.default }),
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default }),
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/user/:userId', component: _Users2.default }),
+	                    _react2.default.createElement(_reactRouterDom.Route, { path: '/logout', component: _Logout2.default })
 	                  )
 	                )
 	              )

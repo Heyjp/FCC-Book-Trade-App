@@ -89,14 +89,13 @@ class Container extends React.Component {
                  >
                     <Switch location={location} key={location.key}>
                        <Route exact path='/'  component={Main} />
-                       <Route  path='/login' key={3} component={AuthContainer} />
-                       <Route  path='/about' key={2} component={About} />
-                       <Route  path='/signup' key={4}  component={AuthContainer} />
-                       <Route  path='/profile' key={5} component={ProfileContainer} />
-                       <Route  path='/dashboard' key={6} component={DashBoard} />
-                       <Route  path='/user/:userId' key={6} component={User} />
-                       <Route path='/logout' key={7} component={Logout} />
-                       <Route path='/animation' key={7} component={AnimationExample} />
+                       <Route  path='/login'  component={AuthContainer} />
+                       <Route  path='/about'  component={About} />
+                       <Route  path='/signup'   component={AuthContainer} />
+                       <Route  path='/profile'  component={ProfileContainer} />
+                       <Route  path='/dashboard'  component={DashBoard} />
+                       <Route  path='/user/:userId'  component={User} />
+                       <Route path='/logout'  component={Logout} />
                     </Switch>
                  </CSSTransitionGroup>
                </div>
