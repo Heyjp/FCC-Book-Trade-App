@@ -25581,10 +25581,6 @@
 
 	var _Logout2 = _interopRequireDefault(_Logout);
 
-	var _animationExample = __webpack_require__(433);
-
-	var _animationExample2 = _interopRequireDefault(_animationExample);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Container = function (_React$Component) {
@@ -25597,8 +25593,8 @@
 
 	    _this.state = {
 	      active: false,
-	      tabs: ["/", "/about", "/login", "/signup", "/dashboard", "/profile", "/logout", '/animation'],
-	      icons: ["001-home.png", '266-question.png', "183-switch.png", "116-user-plus.png", "033-books.png", "114-user.png", "183-switch.png", "033-books.png"]
+	      tabs: ["/", "/about", "/login", "/signup", "/dashboard", "/profile", "/logout"],
+	      icons: ["001-home.png", '266-question.png', "183-switch.png", "116-user-plus.png", "033-books.png", "114-user.png", "183-switch.png"]
 	    };
 
 	    _this.handleClick = _this.handleClick.bind(_this);
@@ -25623,30 +25619,6 @@
 	    value: function render() {
 	      var _this2 = this;
 
-	      /*
-	      const MyComp = (props) => {
-	        console.log(props, "this is props of MyComp");
-	          const {pathname} = props.location;
-	          switch (pathname) {
-	            case '/':
-	              return <Main />
-	            case '/about':
-	              return <About />
-	            case '/login':
-	              return <AuthContainer />
-	            case '/signup':
-	              return <AuthContainer />
-	            case '/dashboard':
-	              return <DashBoard />
-	            case '/profile':
-	              return <ProfileContainer />
-	            case '/logout':
-	              return <Logout />
-	            default:
-	              return <User />
-	          }
-	      }
-	      */
 	      return _react2.default.createElement(
 	        _reactRouterDom.BrowserRouter,
 	        null,
@@ -25664,13 +25636,13 @@
 	              }),
 	              _react2.default.createElement(
 	                'div',
-	                { className: 'app-wrapper' },
+	                { id: 'style-9', className: 'app-wrapper' },
 	                _react2.default.createElement(
 	                  _reactTransitionGroup.CSSTransitionGroup,
 	                  {
 	                    transitionName: 'example',
-	                    transitionEnterTimeout: 300,
-	                    transitionLeaveTimeout: 500
+	                    transitionEnterTimeout: 800,
+	                    transitionLeaveTimeout: 100
 	                  },
 	                  _react2.default.createElement(
 	                    _reactRouterDom.Switch,
@@ -25693,24 +25665,6 @@
 	  }]);
 	  return Container;
 	}(_react2.default.Component);
-
-	var CompArray = [{ id: 1, property: _Main2.default, link: '/' }, { id: 2, property: _About2.default, link: '/about' }, { id: 3, property: _Auth2.default, link: '/login' }, { id: 4, property: _Auth2.default, link: '/signup' }, { id: 5, property: _Dashboard2.default, link: '/dashboard' }, { id: 6, property: _Profile2.default, link: '/profile' }, { id: 7, property: _Logout2.default, link: '/logout' }, { id: 8, property: _Users2.default, link: '/user/:userId' }];
-
-	/*
-
-	<Route exact path='/'  component={Main} />
-	<Route  path='/login' key={3} component={AuthContainer} />
-	<Route  path='/about' key={2} component={About} />
-	<Route  path='/signup' key={4}  component={AuthContainer} />
-	<Route  path='/profile' key={5} component={ProfileContainer} />
-	<Route  path='/dashboard' key={6} component={DashBoard} />
-	<Route  path='/user/:userId' key={6} component={User} />
-	<Route path='/logout' key={7} component={Logout} />
-	<Route path='/animation' key={7} component={AnimationExample} />
-
-	<Route path='/' location={location} key={location.key} render={MyComp} />
-
-	*/
 
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
@@ -37234,7 +37188,7 @@
 	      } else if (this.state.active === "add") {
 	        activeComponent = _react2.default.createElement(
 	          'div',
-	          null,
+	          { className: 'addbooks-container' },
 	          _react2.default.createElement(_Profile.AddBooks, {
 	            title: this.state.title,
 	            author: this.state.author,
@@ -37251,22 +37205,14 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { className: 'dashboard-container' },
 	        _react2.default.createElement(_Profile.Profile, null),
 	        _react2.default.createElement(_reactNotificationSystem2.default, { ref: 'notificationSystem' }),
 	        _react2.default.createElement(
 	          'div',
 	          null,
-	          _react2.default.createElement(
-	            'div',
-	            null,
-	            _react2.default.createElement(_Profile.OptionBar, { tabs: this.state.tabs, handleClick: this.handleClick }),
-	            _react2.default.createElement(
-	              'div',
-	              null,
-	              activeComponent
-	            )
-	          )
+	          _react2.default.createElement(_Profile.OptionBar, { tabs: this.state.tabs, handleClick: this.handleClick }),
+	          activeComponent
 	        )
 	      );
 	    }
@@ -37547,7 +37493,7 @@
 	var Profile = exports.Profile = function Profile() {
 	  return _react2.default.createElement(
 	    'div',
-	    null,
+	    { className: 'profile-header' },
 	    _react2.default.createElement(
 	      'h1',
 	      null,
@@ -37562,7 +37508,7 @@
 	    null,
 	    _react2.default.createElement(
 	      'ul',
-	      null,
+	      { className: 'profile-nav' },
 	      props.tabs.map(function (e, i) {
 	        return _react2.default.createElement(
 	          'li',
@@ -37577,15 +37523,15 @@
 	var AddBooks = exports.AddBooks = function AddBooks(props) {
 	  return _react2.default.createElement(
 	    'div',
-	    null,
+	    { className: 'addbook-form-container' },
 	    _react2.default.createElement(
-	      'h4',
-	      null,
-	      'Add Book'
+	      'h2',
+	      { className: 'addbook-header' },
+	      'Add Books'
 	    ),
 	    _react2.default.createElement(
 	      'div',
-	      null,
+	      { className: 'addbook-form' },
 	      _react2.default.createElement('input', { type: 'text', placeholder: 'Book Title', value: props.title, onChange: props.updateTitle }),
 	      _react2.default.createElement('input', { type: 'text', placeholder: 'Author', value: props.author, onChange: props.updateAuthor }),
 	      _react2.default.createElement(
@@ -37600,9 +37546,9 @@
 	var RequestTab = exports.RequestTab = function RequestTab(props) {
 	  return _react2.default.createElement(
 	    'div',
-	    null,
+	    { className: 'request-container', id: 'style-9' },
 	    _react2.default.createElement(
-	      'h4',
+	      'h2',
 	      null,
 	      'Requests'
 	    ),
@@ -38036,9 +37982,9 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { className: 'profile-container' },
 	        _react2.default.createElement(
-	          'h4',
+	          'h2',
 	          null,
 	          'Profile'
 	        ),
@@ -38105,55 +38051,51 @@
 	var Details = function Details(props) {
 	  return _react2.default.createElement(
 	    "div",
-	    null,
+	    { className: "profile-wrapper" },
 	    _react2.default.createElement(
-	      "div",
+	      "ul",
 	      null,
-	      _react2.default.createElement(
-	        "ul",
-	        null,
-	        props.fields.map(function (e, i) {
-	          var style = void 0;
-	          props.active === i ? style = { display: "inherit" } : style = { display: "none" };
-	          return _react2.default.createElement(
-	            "li",
-	            { key: i },
+	      props.fields.map(function (e, i) {
+	        var style = void 0;
+	        props.active === i ? style = { display: "inherit" } : style = { display: "none" };
+	        return _react2.default.createElement(
+	          "li",
+	          { key: i },
+	          _react2.default.createElement(
+	            "div",
+	            { className: "profile-section" },
+	            _react2.default.createElement(
+	              "h4",
+	              null,
+	              e
+	            ),
+	            props.userProfile[e].length > 1 ? _react2.default.createElement(
+	              "p",
+	              null,
+	              props.userProfile[e]
+	            ) : _react2.default.createElement(
+	              "p",
+	              null,
+	              "Please Enter in your " + e
+	            ),
+	            _react2.default.createElement(
+	              "button",
+	              { className: "flat-button", onClick: props.handleClick.bind(this, i) },
+	              "Edit"
+	            ),
 	            _react2.default.createElement(
 	              "div",
-	              null,
-	              _react2.default.createElement(
-	                "h4",
-	                null,
-	                e
-	              ),
-	              props.userProfile[e].length > 1 ? _react2.default.createElement(
-	                "p",
-	                null,
-	                props.userProfile[e]
-	              ) : _react2.default.createElement(
-	                "p",
-	                null,
-	                "Please Enter in your " + e
-	              ),
+	              { className: "edit-section", style: style },
+	              _react2.default.createElement("input", { type: "text", placeholder: e, value: props.inputValues[e], onChange: props.handleChange.bind(this, e) }),
 	              _react2.default.createElement(
 	                "button",
-	                { onClick: props.handleClick.bind(this, i) },
-	                "Edit"
-	              ),
-	              _react2.default.createElement(
-	                "div",
-	                { style: style },
-	                _react2.default.createElement("input", { type: "text", placeholder: e, value: props.inputValues[e], onChange: props.handleChange.bind(this, e) }),
-	                _react2.default.createElement(
-	                  "button",
-	                  { onClick: props.handleSubmit.bind(this, e) },
-	                  "Submit Change "
-	                )
+	                { onClick: props.handleSubmit.bind(this, e) },
+	                "Submit Change "
 	              )
 	            )
-	          );
-	        })
-	      )
+	          )
+	        );
+	      })
 	    )
 	  );
 	};
@@ -38767,154 +38709,6 @@
 	  return cssVendorPrefix = '-' + pre + '-';
 	}
 
-
-/***/ }),
-/* 433 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _extends2 = __webpack_require__(265);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactTransitionGroup = __webpack_require__(321);
-
-	var _reactRouterDom = __webpack_require__(337);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var AnimationExample = function AnimationExample() {
-	  return _react2.default.createElement(
-	    _reactRouterDom.BrowserRouter,
-	    null,
-	    _react2.default.createElement(_reactRouterDom.Route, { render: function render(_ref) {
-	        var location = _ref.location;
-	        return _react2.default.createElement(
-	          'div',
-	          { style: styles.fill },
-	          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', render: function render() {
-	              return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/10/90/50' });
-	            } }),
-	          _react2.default.createElement(
-	            'ul',
-	            { style: styles.nav },
-	            _react2.default.createElement(
-	              NavLink,
-	              { to: '/10/90/50' },
-	              'Red'
-	            ),
-	            _react2.default.createElement(
-	              NavLink,
-	              { to: '/120/100/40' },
-	              'Green'
-	            ),
-	            _react2.default.createElement(
-	              NavLink,
-	              { to: '/200/100/40' },
-	              'Blue'
-	            ),
-	            _react2.default.createElement(
-	              NavLink,
-	              { to: '/310/100/50' },
-	              'Pink'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { style: styles.content },
-	            _react2.default.createElement(
-	              _reactTransitionGroup.CSSTransitionGroup,
-	              {
-	                transitionName: 'fade',
-	                transitionEnterTimeout: 300,
-	                transitionLeaveTimeout: 300
-	              },
-	              _react2.default.createElement(_reactRouterDom.Route, {
-	                location: location,
-	                key: location.key,
-	                path: '/:h/:s/:l',
-	                component: HSL
-	              })
-	            )
-	          )
-	        );
-	      } })
-	  );
-	};
-
-	var NavLink = function NavLink(props) {
-	  return _react2.default.createElement(
-	    'li',
-	    { style: styles.navItem },
-	    _react2.default.createElement(_reactRouterDom.Link, (0, _extends3.default)({}, props, { style: { color: 'inherit' } }))
-	  );
-	};
-
-	var HSL = function HSL(_ref2) {
-	  var params = _ref2.match.params;
-	  return _react2.default.createElement(
-	    'div',
-	    { style: (0, _extends3.default)({}, styles.fill, styles.hsl, {
-	        background: 'hsl(' + params.h + ', ' + params.s + '%, ' + params.l + '%)'
-	      }) },
-	    'hsl(',
-	    params.h,
-	    ', ',
-	    params.s,
-	    '%, ',
-	    params.l,
-	    '%)'
-	  );
-	};
-
-	var styles = {};
-
-	styles.fill = {
-	  position: 'absolute',
-	  left: 0,
-	  right: 0,
-	  top: 0,
-	  bottom: 0
-	};
-
-	styles.content = (0, _extends3.default)({}, styles.fill, {
-	  top: '40px',
-	  textAlign: 'center'
-	});
-
-	styles.nav = {
-	  padding: 0,
-	  margin: 0,
-	  position: 'absolute',
-	  top: 0,
-	  height: '40px',
-	  width: '100%',
-	  display: 'flex'
-	};
-
-	styles.navItem = {
-	  textAlign: 'center',
-	  flex: 1,
-	  listStyleType: 'none',
-	  padding: '10px'
-	};
-
-	styles.hsl = (0, _extends3.default)({}, styles.fill, {
-	  color: 'white',
-	  paddingTop: '20px',
-	  fontSize: '30px'
-	});
-
-	exports.default = AnimationExample;
 
 /***/ })
 /******/ ]);

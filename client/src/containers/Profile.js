@@ -115,8 +115,8 @@ class ProfileContainer extends React.Component {
     }
 
     return (
-      <div>
-        <h4>Profile</h4>
+      <div className="profile-container">
+        <h2>Profile</h2>
         <Details
         inputValues={inputValues}
         userProfile={this.props.Profile}

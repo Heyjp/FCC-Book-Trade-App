@@ -177,7 +177,7 @@ class DashBoard extends React.Component {
       )
     } else if (this.state.active === "add") {
       activeComponent =  (
-        <div>
+        <div className="addbooks-container">
           <AddBooks
            title={this.state.title}
            author={this.state.author}
@@ -196,16 +196,12 @@ class DashBoard extends React.Component {
     }
 
       return (
-        <div>
+        <div className="dashboard-container">
           <Profile />
           <NotificationSystem ref="notificationSystem" />
           <div>
-            <div>
               <OptionBar tabs={this.state.tabs} handleClick={this.handleClick} />
-              <div>
-                {activeComponent}
-              </div>
-            </div>
+              {activeComponent}
           </div>
         </div>
       )
