@@ -6,6 +6,12 @@ const loginReducer = (state = {
   userLibrary: [],
 }, action) => {
   switch (action.type) {
+
+    case "ADD_BOOK_TO_LIBRARY":
+      return Object.assign({}, state, {
+        userLibrary: state.userLibrary.concat(action.book)
+      });
+
     case "SET_LOGIN_PENDING":
       return Object.assign({}, state, {
         isLoginPending: action.isLoginPending

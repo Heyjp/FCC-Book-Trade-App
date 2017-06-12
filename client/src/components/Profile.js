@@ -35,7 +35,7 @@ export const RequestTab = (props) => (
     <div className="request-container" id="style-9">
       <h2>Requests</h2>
         {props.books.inc.length >= 1 && <div>
-          <h6>Incoming Requests</h6>
+          <h6>Incoming Trade Requests</h6>
           <BooksList
             books={props.books.inc}
             key={1}
@@ -44,7 +44,7 @@ export const RequestTab = (props) => (
          </div>
        }
         {props.books.out.length >= 1 && <div>
-                                          <h6>Requested Trades</h6>
+                                          <h6>Your Requested Trades</h6>
                                           <BooksList
                                             books={props.books.out}
                                             key={2}

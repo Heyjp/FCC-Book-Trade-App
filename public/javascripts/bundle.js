@@ -24805,7 +24805,7 @@
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _user = __webpack_require__(266);
+	var _user = __webpack_require__(265);
 
 	var _user2 = _interopRequireDefault(_user);
 
@@ -24853,6 +24853,12 @@
 	  var action = arguments[1];
 
 	  switch (action.type) {
+
+	    case "ADD_BOOK_TO_LIBRARY":
+	      return (0, _assign2.default)({}, state, {
+	        userLibrary: state.userLibrary.concat(action.book)
+	      });
+
 	    case "SET_LOGIN_PENDING":
 	      return (0, _assign2.default)({}, state, {
 	        isLoginPending: action.isLoginPending
@@ -25402,7 +25408,7 @@
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(265);
+	var _extends2 = __webpack_require__(266);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -25438,6 +25444,16 @@
 	          out: requests
 	        }
 	      });
+	    case "ACCEPT_REQUEST":
+	      var incRequests = state.requests.inc.filter(function (e) {
+	        return e._id !== action.book._id;
+	      });
+	      return (0, _extends3.default)({}, state, {
+	        requests: {
+	          inc: incRequests,
+	          out: state.requests.out
+	        }
+	      });
 	    default:
 	      return state;
 	  }
@@ -25447,6 +25463,38 @@
 
 /***/ }),
 /* 265 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends2 = __webpack_require__(266);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var userReducer = function userReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'SET_PROFILE':
+	      return (0, _extends3.default)({}, state, {
+	        Profile: action.details
+	      });
+	    default:
+	      return state;
+	  }
+	};
+
+	exports.default = userReducer;
+
+/***/ }),
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25472,38 +25520,6 @@
 
 	  return target;
 	};
-
-/***/ }),
-/* 266 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _extends2 = __webpack_require__(265);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var userReducer = function userReducer() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	  var action = arguments[1];
-
-	  switch (action.type) {
-	    case 'SET_PROFILE':
-	      return (0, _extends3.default)({}, state, {
-	        Profile: action.details
-	      });
-	    default:
-	      return state;
-	  }
-	};
-
-	exports.default = userReducer;
 
 /***/ }),
 /* 267 */
@@ -35156,9 +35172,16 @@
 	  };
 	};
 
-	var cancelRequest = exports.cancelRequest = function cancelRequest(book) {
+	var cancelTradeRequest = exports.cancelTradeRequest = function cancelTradeRequest(book) {
 	  return {
 	    type: "CANCEL_REQUEST",
+	    book: book
+	  };
+	};
+
+	var acceptTradeRequest = exports.acceptTradeRequest = function acceptTradeRequest(book) {
+	  return {
+	    type: "ACCEPT_REQUEST",
 	    book: book
 	  };
 	};
@@ -37117,8 +37140,8 @@
 
 	      _axios2.default.post('/api/add-book', self.props.modal).then(function (res) {
 	        self.bookAddNotification();
+	        self.props.dispatch((0, _login.addBookToLibrary)(self.props.modal));
 	        self.toggleModal();
-	        self.setUserLibrary();
 	      });
 	    }
 	  }, {
@@ -37129,16 +37152,6 @@
 	        level: 'success',
 	        position: 'tc'
 	      });
-	    }
-	  }, {
-	    key: 'cancelTrade',
-	    value: function cancelTrade() {
-
-	      /*
-	        axios.post('/api/cancel-trade', data)
-	          .then(function (data) {
-	          })
-	        */
 	    }
 	  }, {
 	    key: 'getRequests',
@@ -37359,6 +37372,7 @@
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.toggleModal = _this.toggleModal.bind(_this);
 	    _this.rejectRequests = _this.rejectRequests.bind(_this);
+	    _this.acceptRequest = _this.acceptRequest.bind(_this);
 
 	    _this.state = {
 	      isOpen: false
@@ -37366,11 +37380,16 @@
 	    return _this;
 	  }
 
-	  // Make requests, accept and reject incoming requests
-	  // Cancel outgoing requests
-
-
 	  (0, _createClass3.default)(RequestContainer, [{
+	    key: 'acceptRequest',
+	    value: function acceptRequest(data) {
+	      this.props.dispatch((0, _index.acceptTradeRequest)(data));
+	    }
+
+	    // Make requests, accept and reject incoming requests
+	    // Cancel outgoing requests
+
+	  }, {
 	    key: 'handleReq',
 	    value: function handleReq(option, e) {
 	      e.stopPropagation();
@@ -37379,6 +37398,7 @@
 	      var user = this.props.user;
 
 	      option === "accept" ? _axios2.default.post('/api/accept-trade?user=' + user, data).then(function (res) {
+	        self.acceptRequest(data);
 	        self.refs.notificationSystem.addNotification({
 	          message: "Trade has been accepted",
 	          level: "success"
@@ -37394,7 +37414,7 @@
 	  }, {
 	    key: 'rejectRequests',
 	    value: function rejectRequests(book) {
-	      this.props.dispatch((0, _index.cancelRequest)(book));
+	      this.props.dispatch((0, _index.cancelTradeRequest)(book));
 	    }
 	  }, {
 	    key: 'toggleModal',
@@ -37463,6 +37483,7 @@
 	  value: true
 	});
 	exports.setUser = setUser;
+	exports.addBookToLibrary = addBookToLibrary;
 	exports.setUserLibrary = setUserLibrary;
 	exports.setLoginPending = setLoginPending;
 	exports.setLoginSuccess = setLoginSuccess;
@@ -37481,11 +37502,19 @@
 	var SET_USER = 'SET_USER';
 	var SET_USER_LIBRARY = 'SET_USER_LIBRARY';
 	var SET_REQUEST_MODAL = "SET_REQUEST_MODAL";
+	var ADD_BOOK_TO_LIBRARY = "ADD_BOOK_TO_LIBRARY";
 
 	function setUser(user) {
 	  return {
 	    type: SET_USER,
 	    user: user
+	  };
+	}
+
+	function addBookToLibrary(book) {
+	  return {
+	    type: "ADD_BOOK_TO_LIBRARY",
+	    book: book
 	  };
 	}
 
@@ -37618,7 +37647,7 @@
 	      _react2.default.createElement(
 	        'h6',
 	        null,
-	        'Incoming Requests'
+	        'Incoming Trade Requests'
 	      ),
 	      _react2.default.createElement(_Book2.default, {
 	        books: props.books.inc,
@@ -37632,7 +37661,7 @@
 	      _react2.default.createElement(
 	        'h6',
 	        null,
-	        'Requested Trades'
+	        'Your Requested Trades'
 	      ),
 	      _react2.default.createElement(_Book2.default, {
 	        books: props.books.out,

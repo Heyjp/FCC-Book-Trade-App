@@ -3,7 +3,7 @@ import axios from 'axios'
 import {connect} from 'react-redux';
 
 import {setReqModal} from "../actions/login.js";
-import {setModal, cancelRequest} from '../actions/index.js'
+import {setModal, cancelTradeRequest, acceptTradeRequest} from '../actions/index.js'
 
 import {RequestTab} from '../components/Profile.js'
 import Modal from '../components/Modal.js'
@@ -20,10 +20,15 @@ class RequestContainer extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.rejectRequests = this.rejectRequests.bind(this);
+    this.acceptRequest = this.acceptRequest.bind(this);
 
     this.state = {
       isOpen: false
     }
+  }
+
+  acceptRequest (data) {
+    this.props.dispatch(acceptTradeRequest(data));
   }
 
   // Make requests, accept and reject incoming requests
@@ -36,6 +41,7 @@ class RequestContainer extends React.Component {
 
     option === "accept" ? axios.post(`/api/accept-trade?user=${user}`, data)
       .then(function (res) {
+        self.acceptRequest(data);
         self.refs.notificationSystem.addNotification({
           message: "Trade has been accepted",
           level: "success"
@@ -53,7 +59,7 @@ class RequestContainer extends React.Component {
   }
 
   rejectRequests (book) {
-    this.props.dispatch(cancelRequest(book))
+    this.props.dispatch(cancelTradeRequest(book))
   }
 
   toggleModal (e) {

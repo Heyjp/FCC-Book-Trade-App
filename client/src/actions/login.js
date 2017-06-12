@@ -6,11 +6,19 @@ const SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
 const SET_USER = 'SET_USER';
 const SET_USER_LIBRARY = 'SET_USER_LIBRARY';
 const SET_REQUEST_MODAL = "SET_REQUEST_MODAL";
+const ADD_BOOK_TO_LIBRARY = "ADD_BOOK_TO_LIBRARY";
 
 export function setUser(user) {
   return {
     type: SET_USER,
     user
+  };
+}
+
+export function addBookToLibrary  (book) {
+  return {
+    type: "ADD_BOOK_TO_LIBRARY",
+    book
   };
 }
 

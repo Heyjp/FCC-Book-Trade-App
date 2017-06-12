@@ -7,8 +7,8 @@ import axios from 'axios'
 import RequestContainer from './Requests.js'
 
 // ACTIONS
-import {setUserLibrary} from '../actions/login.js'
-import {setLibrary, setModal, setRequests} from '../actions/index.js'
+import {setUserLibrary, addBookToLibrary} from '../actions/login.js'
+import {setModal, setRequests} from '../actions/index.js'
 
 // COMPONENTS
 import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
@@ -58,10 +58,9 @@ class DashBoard extends React.Component {
     axios.post('/api/add-book', self.props.modal)
       .then(function (res) {
         self.bookAddNotification();
+        self.props.dispatch(addBookToLibrary(self.props.modal));
         self.toggleModal();
-        self.setUserLibrary();
-      })
-
+      });
   }
 
   bookAddNotification (type) {
@@ -72,16 +71,6 @@ class DashBoard extends React.Component {
      })
   }
 
-  cancelTrade () {
-
-    /*
-      axios.post('/api/cancel-trade', data)
-        .then(function (data) {
-
-      })
-
-    */
-  }
 
   getRequests () {
     let self = this;

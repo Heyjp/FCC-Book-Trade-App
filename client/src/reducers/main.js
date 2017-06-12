@@ -19,16 +19,27 @@ const bookApp = (state = {
         requests: action.requests
     }
     case "CANCEL_REQUEST":
-    let requests = state.requests.out.filter(function (e) {
-        return e._id !== action.book._id
-      })
-    return {
-      ...state,
-      requests: {
-        inc: state.requests.inc,
-        out: requests
+      let requests = state.requests.out.filter(function (e) {
+          return e._id !== action.book._id
+        })
+      return {
+        ...state,
+        requests: {
+          inc: state.requests.inc,
+          out: requests
+        }
       }
-    }
+    case "ACCEPT_REQUEST":
+      let incRequests = state.requests.inc.filter(function (e) {
+          return e._id !== action.book._id
+        })
+      return {
+        ...state,
+        requests: {
+          inc: incRequests,
+          out: state.requests.out
+        }
+      }
     default:
       return state
   }

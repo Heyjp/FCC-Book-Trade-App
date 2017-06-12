@@ -26,9 +26,16 @@ export const setRequests = (requests) => {
   }
 }
 
-export const cancelRequest = (book) => {
+export const cancelTradeRequest = (book) => {
   return {
     type: "CANCEL_REQUEST",
+    book
+  }
+}
+
+export const acceptTradeRequest = (book) => {
+  return {
+    type: "ACCEPT_REQUEST",
     book
   }
 }
