@@ -23,10 +23,10 @@ const Modal = (props) => {
       </div>
       <div className="modal-bot">
         <ul className="list-container">
-          {!!props.owner && !props.cancelBook && !props.user && !props.modal.user && <li className="modal-signin"><Link id="button-one" to="/login">Login</Link><Link id="button-two" to="/signup">Signup</Link></li>}
+          {!props.owner && !props.user && !props.modal.user && <li className="modal-signin"><Link id="button-one" to="/login">Login</Link><Link id="button-two" to="/signup">Signup</Link></li>}
           {props.user && props.reqBook && <li className="modal-signin"><a id="button-three"onClick={props.reqBook.bind(this, props.modal)}>Request Book</a></li>}
-          {!!props.owner && props.handleClick && <li className="modal-signin"><a id="button-four"onClick={props.handleClick.bind(this, "accept")}>Accept Request</a></li>}
-          {!props.owner && props.handleClick && <li className="modal-signin"><a id="button-five"onClick={props.handleClick.bind(this, "cancel")}>Cancel Request</a></li>}
+          {props.owner === "owner" && props.handleClick && <li className="modal-signin"><a id="button-four"onClick={props.handleClick.bind(this, "accept")}>Accept Request</a></li>}
+          {props.owner === "request" && props.handleClick && <li className="modal-signin"><a id="button-five"onClick={props.handleClick.bind(this, "cancel")}>Cancel Request</a></li>}
           {!props.cancelBook && props.addBook && <li className="modal-signin"><a id="button-three" onClick={props.handleClick.bind(this, "add")}>Add Book To Collection</a></li>}
         </ul>
       </div>

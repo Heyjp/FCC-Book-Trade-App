@@ -60,6 +60,14 @@ router.post('/api/request-book', function (req, res) {
 
 });
 
+
+router.get('/api/login-check', function (req, res) {
+  let token = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+  let user = token.id;
+  res.status(200).send(user);
+});
+
+
 router.post('/api/accept-trade', function(req, res) {
   console.log("accept trade", req.body);
   let data = req.body;
@@ -105,17 +113,17 @@ router.post('/api/login', function (req, res, next) {
   passport.authenticate('local-login', function(err, user, info) {
     if (err) {
       console.log(err, "this is err in api/sig")
-      return res.status(200).send(false)
+      return res.status(200).send({err: true})
      }
     if (!user) {
       console.log("user does not exist")
-      return   res.status(200).send(false)
+      return   res.status(200).send({user: false})
     }
     req.session.user = user.username;
     let sig = jwt.sign({id: user.username}, process.env.JWT_KEY);
     res.status(200)
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
-    .send(user.username)
+    .send({user: user.username})
   })(req, res, next);
 
 });
@@ -129,15 +137,16 @@ router.post('/api/signup', function (req, res, next) {
       return res.status(200).send(false)
      }
     if (!user) {
-      console.log("user does not exist")
-      return res.status(200).send(false)
+      console.log("user exists")
+      return res.status(200).send({user: "found"})
     }
+
     req.session.user = user.username;
     let sig = jwt.sign({id: user.username}, process.env.JWT_KEY);
 
     return res.status(200)
     .cookie('token', sig, { expires: new Date(Date.now() + 900000)})
-    .send(user.username);
+    .send({user: user.username});
   })(req, res, next);
 });
 

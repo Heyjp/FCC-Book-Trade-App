@@ -13,7 +13,8 @@ export const OptionBar = (props) => (
   <div>
     <ul className="profile-nav">
       {props.tabs.map(function (e, i) {
-        return <li onClick={props.handleClick.bind(this, i)} key={i}>{e}</li>;
+        let active = props.active === e ? "active-option" : "";
+        return <li className={`${active}`}onClick={props.handleClick.bind(this, i)} key={i}>{e}</li>;
       })}
     </ul>
   </div>

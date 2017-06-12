@@ -6,6 +6,9 @@ import Form from '../components/Form.js';
 import {setUser} from '../actions/login.js';
 import axios from 'axios';
 
+import NotificationSystem from 'react-notification-system';
+
+
 class AuthContainer extends React.Component {
 
   constructor(props) {
@@ -24,10 +27,40 @@ class AuthContainer extends React.Component {
     this.handlePass = this.handlePass.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this)
     this.promiseCall = this.promiseCall.bind(this)
+    this.handlePromiseError = this.handlePromiseError.bind(this);
   }
 
   componentWillReceiveProps (props) {
     console.log("new props", props)
+  }
+
+  handlePromiseError (err) {
+    console.log(err, "this is handlePromiseError")
+
+    if (err.user === false) {
+      return this.refs.notificationSystem.addNotification({
+        message: "Error Login name not found.",
+        level: 'error',
+        position: 'tc'
+      })
+    }
+
+    if (err.user === "found") {
+      return this.refs.notificationSystem.addNotification({
+        message: "User already exists, choose another Username.",
+        level: 'error',
+        position: 'tc'
+      })
+    }
+
+    if (err.err) {
+      return this.refs.notificationSystem.addNotification({
+        message: "Error found on the server. Please try again in a minute.",
+        level: 'warning',
+        position: 'tc'
+      })
+    }
+
   }
 
   handleUser (e) {
@@ -57,8 +90,10 @@ class AuthContainer extends React.Component {
   promiseCall (username, password, route) {
     let self = this;
     axios.post(`/api/${route}`, {username, password}).then(function (res) {
-      console.log(res, "this is res on promise call")
-      self.props.dispatch(setUser(res.data))
+      if (res.data.err || !res.data.user || res.data.user === "found") {
+      return self.handlePromiseError(res.data);
+      }
+      self.props.dispatch(setUser(res.data.user))
     }).catch(function (err) {
       console.error(err, "err")
     })
@@ -90,6 +125,7 @@ class AuthContainer extends React.Component {
         username={this.state.username}
         password={this.state.password}
          />
+        <NotificationSystem ref="notificationSystem" />
       </div>
     )
   }

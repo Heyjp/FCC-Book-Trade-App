@@ -15,7 +15,7 @@ const Details = (props) => {
                   <button className="flat-button" onClick={props.handleClick.bind(this, i)}>Edit</button>
                   <div className="edit-section" style={style}>
                     <input type="text" placeholder={e} value={props.inputValues[e]} onChange={props.handleChange.bind(this, e)}/>
-                    <button onClick={props.handleSubmit.bind(this, e)}>Submit Change </button>
+                    <button className="submit-button" onClick={props.handleSubmit.bind(this, e)}>Submit Change </button>
                   </div>
                 </div>
               </li>

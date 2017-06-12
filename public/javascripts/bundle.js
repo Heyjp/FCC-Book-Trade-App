@@ -25581,6 +25581,12 @@
 
 	var _Logout2 = _interopRequireDefault(_Logout);
 
+	var _login = __webpack_require__(416);
+
+	var _PulseLoader = __webpack_require__(426);
+
+	var _PulseLoader2 = _interopRequireDefault(_PulseLoader);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Container = function (_React$Component) {
@@ -25595,16 +25601,49 @@
 	      active: false,
 	      tabs: ["/", "/about", "/login", "/signup", "/dashboard", "/profile", "/logout"],
 	      icons: ["001-home.png", '266-question.png', "183-switch.png", "116-user-plus.png", "033-books.png", "114-user.png", "183-switch.png"]
+
 	    };
 
 	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.loginCheck = _this.loginCheck.bind(_this);
 	    return _this;
 	  }
 
 	  (0, _createClass3.default)(Container, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.loginCheck();
+	    }
+	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(props) {
 	      console.log(props, "this is props on Container");
+	    }
+	  }, {
+	    key: 'loginCheck',
+	    value: function loginCheck() {
+	      var self = this;
+	      this.setState({
+	        userPending: true
+	      });
+
+	      _axios2.default.get('/api/login-check').then(function (res) {
+
+	        // Delay the setting of state to let Spinner run
+	        setTimeout(function () {
+	          self.setState({
+	            userPending: false
+	          });
+	        }, 3000);
+	        self.props.dispatch((0, _login.setUser)(res.data));
+	      }).catch(function (res) {
+	        setTimeout(function () {
+	          // Delay the setting of state to let Spinner run
+	          self.setState({
+	            userPending: false
+	          });
+	        }, 3000);
+	      });
 	    }
 	  }, {
 	    key: 'handleClick',
@@ -25618,6 +25657,20 @@
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
+
+	      if (this.state.userPending) {
+
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'initial-loader' },
+	          _react2.default.createElement(_PulseLoader2.default, { color: '#26A65B', size: '16px', margin: '4px' }),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Loading App'
+	          )
+	        );
+	      }
 
 	      return _react2.default.createElement(
 	        _reactRouterDom.BrowserRouter,
@@ -35001,7 +35054,7 @@
 	        _react2.default.createElement(
 	          'ul',
 	          { className: 'list-container' },
-	          !!props.owner && !props.cancelBook && !props.user && !props.modal.user && _react2.default.createElement(
+	          !props.owner && !props.user && !props.modal.user && _react2.default.createElement(
 	            'li',
 	            { className: 'modal-signin' },
 	            _react2.default.createElement(
@@ -35024,7 +35077,7 @@
 	              'Request Book'
 	            )
 	          ),
-	          !!props.owner && props.handleClick && _react2.default.createElement(
+	          props.owner === "owner" && props.handleClick && _react2.default.createElement(
 	            'li',
 	            { className: 'modal-signin' },
 	            _react2.default.createElement(
@@ -35033,7 +35086,7 @@
 	              'Accept Request'
 	            )
 	          ),
-	          !props.owner && props.handleClick && _react2.default.createElement(
+	          props.owner === "request" && props.handleClick && _react2.default.createElement(
 	            'li',
 	            { className: 'modal-signin' },
 	            _react2.default.createElement(
@@ -37070,9 +37123,9 @@
 	    }
 	  }, {
 	    key: 'bookAddNotification',
-	    value: function bookAddNotification() {
+	    value: function bookAddNotification(type) {
 	      return this.refs.notificationSystem.addNotification({
-	        message: "Book successfully requested",
+	        message: "Book successfully Added",
 	        level: 'success',
 	        position: 'tc'
 	      });
@@ -37211,7 +37264,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          null,
-	          _react2.default.createElement(_Profile.OptionBar, { tabs: this.state.tabs, handleClick: this.handleClick }),
+	          _react2.default.createElement(_Profile.OptionBar, { tabs: this.state.tabs, active: this.state.active, handleClick: this.handleClick }),
 	          activeComponent
 	        )
 	      );
@@ -37362,7 +37415,13 @@
 	    key: 'render',
 	    value: function render() {
 	      var isActive = this.state.isOpen;
-	      var acceptOrCancel = this.props.modal === this.props.user;
+	      var acceptOrCancel = void 0;
+	      if (this.props.modal) {
+	        acceptOrCancel = this.props.modal.owner === this.props.user ? "owner" : "request";
+	      } else {
+	        acceptOrCancel = false;
+	      }
+
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -37510,9 +37569,10 @@
 	      'ul',
 	      { className: 'profile-nav' },
 	      props.tabs.map(function (e, i) {
+	        var active = props.active === e ? "active-option" : "";
 	        return _react2.default.createElement(
 	          'li',
-	          { onClick: props.handleClick.bind(this, i), key: i },
+	          { className: '' + active, onClick: props.handleClick.bind(this, i), key: i },
 	          e
 	        );
 	      })
@@ -37631,6 +37691,10 @@
 
 	var _axios2 = _interopRequireDefault(_axios);
 
+	var _reactNotificationSystem = __webpack_require__(405);
+
+	var _reactNotificationSystem2 = _interopRequireDefault(_reactNotificationSystem);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var AuthContainer = function (_React$Component) {
@@ -37654,6 +37718,7 @@
 	    _this.handlePass = _this.handlePass.bind(_this);
 	    _this.handleSubmit = _this.handleSubmit.bind(_this);
 	    _this.promiseCall = _this.promiseCall.bind(_this);
+	    _this.handlePromiseError = _this.handlePromiseError.bind(_this);
 	    return _this;
 	  }
 
@@ -37661,6 +37726,35 @@
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(props) {
 	      console.log("new props", props);
+	    }
+	  }, {
+	    key: 'handlePromiseError',
+	    value: function handlePromiseError(err) {
+	      console.log(err, "this is handlePromiseError");
+
+	      if (err.user === false) {
+	        return this.refs.notificationSystem.addNotification({
+	          message: "Error Login name not found.",
+	          level: 'error',
+	          position: 'tc'
+	        });
+	      }
+
+	      if (err.user === "found") {
+	        return this.refs.notificationSystem.addNotification({
+	          message: "User already exists, choose another Username.",
+	          level: 'error',
+	          position: 'tc'
+	        });
+	      }
+
+	      if (err.err) {
+	        return this.refs.notificationSystem.addNotification({
+	          message: "Error found on the server. Please try again in a minute.",
+	          level: 'warning',
+	          position: 'tc'
+	        });
+	      }
 	    }
 	  }, {
 	    key: 'handleUser',
@@ -37698,8 +37792,10 @@
 	    value: function promiseCall(username, password, route) {
 	      var self = this;
 	      _axios2.default.post('/api/' + route, { username: username, password: password }).then(function (res) {
-	        console.log(res, "this is res on promise call");
-	        self.props.dispatch((0, _login.setUser)(res.data));
+	        if (res.data.err || !res.data.user || res.data.user === "found") {
+	          return self.handlePromiseError(res.data);
+	        }
+	        self.props.dispatch((0, _login.setUser)(res.data.user));
 	      }).catch(function (err) {
 	        console.error(err, "err");
 	      });
@@ -37729,7 +37825,8 @@
 	          submit: this.handleSubmit,
 	          username: this.state.username,
 	          password: this.state.password
-	        })
+	        }),
+	        _react2.default.createElement(_reactNotificationSystem2.default, { ref: 'notificationSystem' })
 	      );
 	    }
 	  }]);
@@ -38089,7 +38186,7 @@
 	              _react2.default.createElement("input", { type: "text", placeholder: e, value: props.inputValues[e], onChange: props.handleChange.bind(this, e) }),
 	              _react2.default.createElement(
 	                "button",
-	                { onClick: props.handleSubmit.bind(this, e) },
+	                { className: "submit-button", onClick: props.handleSubmit.bind(this, e) },
 	                "Submit Change "
 	              )
 	            )

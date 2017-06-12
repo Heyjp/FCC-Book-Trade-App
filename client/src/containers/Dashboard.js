@@ -64,9 +64,9 @@ class DashBoard extends React.Component {
 
   }
 
-  bookAddNotification () {
+  bookAddNotification (type) {
     return this.refs.notificationSystem.addNotification({
-       message: "Book successfully requested",
+       message: "Book successfully Added",
        level: 'success',
        position: 'tc'
      })
@@ -200,7 +200,7 @@ class DashBoard extends React.Component {
           <Profile />
           <NotificationSystem ref="notificationSystem" />
           <div>
-              <OptionBar tabs={this.state.tabs} handleClick={this.handleClick} />
+              <OptionBar tabs={this.state.tabs} active={this.state.active} handleClick={this.handleClick} />
               {activeComponent}
           </div>
         </div>

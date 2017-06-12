@@ -72,7 +72,13 @@ class RequestContainer extends React.Component {
 
   render () {
     let isActive = this.state.isOpen
-    let acceptOrCancel = this.props.modal === this.props.user
+    let acceptOrCancel;
+    if (this.props.modal) {
+     acceptOrCancel = this.props.modal.owner === this.props.user ? "owner" : "request";
+   } else {
+     acceptOrCancel = false;
+   }
+
     return (
       <div>
         <RequestTab
