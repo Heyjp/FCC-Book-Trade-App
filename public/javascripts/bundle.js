@@ -24805,7 +24805,7 @@
 
 	var _main2 = _interopRequireDefault(_main);
 
-	var _user = __webpack_require__(265);
+	var _user = __webpack_require__(266);
 
 	var _user2 = _interopRequireDefault(_user);
 
@@ -25408,7 +25408,7 @@
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(266);
+	var _extends2 = __webpack_require__(265);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -25465,38 +25465,6 @@
 /* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _extends2 = __webpack_require__(266);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var userReducer = function userReducer() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	  var action = arguments[1];
-
-	  switch (action.type) {
-	    case 'SET_PROFILE':
-	      return (0, _extends3.default)({}, state, {
-	        Profile: action.details
-	      });
-	    default:
-	      return state;
-	  }
-	};
-
-	exports.default = userReducer;
-
-/***/ }),
-/* 266 */
-/***/ (function(module, exports, __webpack_require__) {
-
 	"use strict";
 
 	exports.__esModule = true;
@@ -25520,6 +25488,38 @@
 
 	  return target;
 	};
+
+/***/ }),
+/* 266 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends2 = __webpack_require__(265);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var userReducer = function userReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'SET_PROFILE':
+	      return (0, _extends3.default)({}, state, {
+	        Profile: action.details
+	      });
+	    default:
+	      return state;
+	  }
+	};
+
+	exports.default = userReducer;
 
 /***/ }),
 /* 267 */
@@ -37103,7 +37103,7 @@
 
 	    _this.state = {
 	      active: false,
-	      tabs: ['current', 'request', 'add'],
+	      tabs: ['Current', 'Requests', 'Add'],
 	      title: '',
 	      author: '',
 	      userLibrary: [],
@@ -37243,15 +37243,15 @@
 
 	      if (!this.state.active) {
 	        activeComponent = _react2.default.createElement(_Book2.default, { books: this.props.userLibrary });
-	      } else if (this.state.active === "current") {
+	      } else if (this.state.active === "Current") {
 	        activeComponent = _react2.default.createElement(_Book2.default, { books: this.props.userLibrary });
-	      } else if (this.state.active === "request") {
+	      } else if (this.state.active === "Requests") {
 	        activeComponent = _react2.default.createElement(
 	          'div',
 	          null,
 	          _react2.default.createElement(_Requests2.default, { books: this.props.requests, handleClick: this.handleBooks })
 	        );
-	      } else if (this.state.active === "add") {
+	      } else if (this.state.active === "Add") {
 	        activeComponent = _react2.default.createElement(
 	          'div',
 	          { className: 'addbooks-container' },
@@ -37272,12 +37272,11 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'dashboard-container' },
-	        _react2.default.createElement(_Profile.Profile, null),
 	        _react2.default.createElement(_reactNotificationSystem2.default, { ref: 'notificationSystem' }),
 	        _react2.default.createElement(
 	          'div',
 	          null,
-	          _react2.default.createElement(_Profile.OptionBar, { tabs: this.state.tabs, active: this.state.active, handleClick: this.handleClick }),
+	          _react2.default.createElement(_Profile.OptionBar, { tabs: this.state.tabs, requests: this.props.requests, active: this.state.active, handleClick: this.handleClick }),
 	          activeComponent
 	        )
 	      );
@@ -37562,7 +37561,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.RequestTab = exports.AddBooks = exports.OptionBar = exports.Profile = undefined;
+	exports.RequestTab = exports.AddBooks = exports.OptionBar = undefined;
 
 	var _react = __webpack_require__(1);
 
@@ -37578,18 +37577,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Profile = exports.Profile = function Profile() {
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'profile-header' },
-	    _react2.default.createElement(
-	      'h1',
-	      null,
-	      'Profile'
-	    )
-	  );
-	};
-
 	var OptionBar = exports.OptionBar = function OptionBar(props) {
 	  return _react2.default.createElement(
 	    'div',
@@ -37599,10 +37586,39 @@
 	      { className: 'profile-nav' },
 	      props.tabs.map(function (e, i) {
 	        var active = props.active === e ? "active-option" : "";
+	        if (e === "Requests" && props.active === e) {
+	          return _react2.default.createElement(
+	            'li',
+	            { id: 'request-tab', className: 'dashboard-tabs ' + active, onClick: props.handleClick.bind(this, i), key: i },
+	            _react2.default.createElement(
+	              'h3',
+	              null,
+	              e
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'counters' },
+	              _react2.default.createElement(
+	                'a',
+	                { href: '#', className: 'request-buttons' },
+	                'Inc: ' + props.requests.inc.length
+	              ),
+	              _react2.default.createElement(
+	                'a',
+	                { href: '#', className: 'request-buttons' },
+	                'Out: ' + props.requests.out.length
+	              )
+	            )
+	          );
+	        }
 	        return _react2.default.createElement(
 	          'li',
-	          { className: '' + active, onClick: props.handleClick.bind(this, i), key: i },
-	          e
+	          { className: 'dashboard-tabs ' + active, onClick: props.handleClick.bind(this, i), key: i },
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            e
+	          )
 	        );
 	      })
 	    )

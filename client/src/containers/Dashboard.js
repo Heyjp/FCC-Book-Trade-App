@@ -11,7 +11,7 @@ import {setUserLibrary, addBookToLibrary} from '../actions/login.js'
 import {setModal, setRequests} from '../actions/index.js'
 
 // COMPONENTS
-import { Profile, CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
+import {CurrentBooks, RequestTab, OptionBar, AddBooks } from '../components/Profile.js';
 import BooksList from '../components/Book.js';
 import Modal from '../components/Modal.js';
 
@@ -23,7 +23,7 @@ class DashBoard extends React.Component {
     super(props);
     this.state = {
       active: false,
-      tabs: ['current', 'request', 'add'],
+      tabs: ['Current', 'Requests', 'Add'],
       title: '',
       author: '',
       userLibrary: [],
@@ -156,15 +156,15 @@ class DashBoard extends React.Component {
 
     if (!this.state.active) {
       activeComponent = <BooksList books={this.props.userLibrary}  />
-    } else if (this.state.active === "current") {
+    } else if (this.state.active === "Current") {
       activeComponent = <BooksList books={this.props.userLibrary}  />
-    } else if (this.state.active === "request") {
+    } else if (this.state.active === "Requests") {
       activeComponent = (
       <div>
         <RequestContainer books={this.props.requests} handleClick={this.handleBooks}/>
       </div>
       )
-    } else if (this.state.active === "add") {
+    } else if (this.state.active === "Add") {
       activeComponent =  (
         <div className="addbooks-container">
           <AddBooks
@@ -186,10 +186,9 @@ class DashBoard extends React.Component {
 
       return (
         <div className="dashboard-container">
-          <Profile />
           <NotificationSystem ref="notificationSystem" />
           <div>
-              <OptionBar tabs={this.state.tabs} active={this.state.active} handleClick={this.handleClick} />
+              <OptionBar tabs={this.state.tabs} requests={this.props.requests} active={this.state.active} handleClick={this.handleClick} />
               {activeComponent}
           </div>
         </div>

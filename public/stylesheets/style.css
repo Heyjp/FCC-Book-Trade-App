@@ -443,15 +443,7 @@ input[type="submit"] {
 }
 
 .dashboard-container {
-  margin-right: 15px;
-  margin-left: 15px;
-}
-
-.profile-header {
-    text-align: center;
-    text-decoration: underline;
-    padding-top: 10px;
-    margin-top: 0px;
+  margin: 0px;
 }
 
 .profile-nav {
@@ -556,6 +548,31 @@ input[type="submit"] {
   justify-content: center;
 }
 
+.dashboard-tabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 75px;
+}
+
+#request-tab {
+  justify-content: space-around;
+}
+
+.request-buttons {
+  margin: 0px;
+  background-color: cadetblue;
+  padding: 5px 10px;
+  border-radius: 10px;
+  color: ghostwhite;
+  margin-bottom: 3px;
+}
+
+.counters {
+  display: flex;
+  flex-direction: column;
+}
 /*  REACT TRANSITIONS */
 
 .example-enter {

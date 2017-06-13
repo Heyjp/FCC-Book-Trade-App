@@ -3,18 +3,24 @@ import axios from 'axios';
 
 import BooksList from './Book.js'
 
-export const Profile = () => (
-  <div className="profile-header">
-    <h1>Profile</h1>
-  </div>
-)
 
 export const OptionBar = (props) => (
   <div>
     <ul className="profile-nav">
       {props.tabs.map(function (e, i) {
         let active = props.active === e ? "active-option" : "";
-        return <li className={`${active}`}onClick={props.handleClick.bind(this, i)} key={i}>{e}</li>;
+        if (e === "Requests" && props.active === e) {
+          return (
+                  <li id="request-tab" className={`dashboard-tabs ${active}`}onClick={props.handleClick.bind(this, i)} key={i}>
+                    <h3>{e}</h3>
+                    <div className="counters">
+                      <a href="#" className="request-buttons">{`Inc: ${props.requests.inc.length}`}</a>
+                      <a href="#" className="request-buttons">{`Out: ${props.requests.out.length}`}</a>
+                    </div>
+                  </li>
+                  )
+        }
+        return <li className={`dashboard-tabs ${active}`}onClick={props.handleClick.bind(this, i)} key={i}><h2>{e}</h2></li>;
       })}
     </ul>
   </div>
